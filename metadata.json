@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Veritas Global AI News Portal",
+  "description": "Enterprise AI-Powered Global News Intelligence Platform with Real-Time Verification, Predictive Forecasts, Crisis Radar, and Research Workspace",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
