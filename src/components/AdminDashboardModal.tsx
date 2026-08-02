@@ -13,10 +13,7 @@ import { INITIAL_ARTICLES } from '../data/mockNewsData';
 import { calculateEvergreenScore, getAiEditorialRecommendation, generateXmlSitemap, enrichArticleWithLifecycleAndSeo, ArticleLifecycleManager, LifecycleEvaluationReport } from '../services/newsLifecycleService';
 import { WhatsAppService, WHATSAPP_CHANNEL_URL } from '../services/WhatsAppService';
 import { WhatsAppQrModal } from './WhatsAppQrModal';
-import { BillingService } from '../services/BillingService';
-import { EnterpriseAccountService } from '../services/EnterpriseAccountService';
-import { VeritasAPIService } from '../services/VeritasAPIService';
-import { ShoppingBag, MessageCircle, QrCode, ExternalLink, TrendingUp, BarChart3 } from 'lucide-react';
+import { MessageCircle, QrCode, ExternalLink, TrendingUp, BarChart3 } from 'lucide-react';
 
 interface AdminUser {
   id: string;
@@ -139,7 +136,7 @@ const INITIAL_ACTIVITY_RECORDS: ActivityRecord[] = [
 ];
 
 export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState<'telemetry' | 'web_settings' | 'roles' | 'records' | 'security' | 'multilingual' | 'lifecycle' | 'whatsapp' | 'marketplace'>('telemetry');
+  const [activeTab, setActiveTab] = useState<'telemetry' | 'web_settings' | 'roles' | 'records' | 'security' | 'multilingual' | 'lifecycle' | 'whatsapp'>('telemetry');
   const [auditReport, setAuditReport] = useState<LifecycleEvaluationReport | null>(null);
   const [showAdminQrModal, setShowAdminQrModal] = useState<boolean>(false);
   
@@ -813,14 +810,6 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ onClos
             }`}
           >
             <MessageCircle className="w-4 h-4 text-emerald-400 fill-current" /> 💬 WhatsApp Growth & Audience Analytics
-          </button>
-          <button
-            onClick={() => setActiveTab('marketplace')}
-            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              activeTab === 'marketplace' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <ShoppingBag className="w-4 h-4 text-indigo-400" /> 🛒 Marketplace & Revenue Control
           </button>
         </div>
 
@@ -1726,124 +1715,6 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ onClos
               </div>
 
               <WhatsAppQrModal isOpen={showAdminQrModal} onClose={() => setShowAdminQrModal(false)} />
-            </div>
-          );
-        })()}
-
-        {/* TAB 9: ADMIN MARKETPLACE CONTROL CENTER */}
-        {activeTab === 'marketplace' && (() => {
-          const orgs = EnterpriseAccountService.getOrganizations();
-          const invoices = BillingService.getInvoices();
-          const totalRev = BillingService.getTotalRevenueUSD();
-          const apiKeys = VeritasAPIService.getAPIKeys();
-
-          return (
-            <div className="space-y-6 font-mono text-xs">
-              {/* Header & Revenue Summary */}
-              <div className="p-6 bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border border-indigo-800 rounded-3xl grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="space-y-1 md:col-span-2">
-                  <div className="flex items-center gap-2">
-                    <ShoppingBag className="w-6 h-6 text-indigo-400" />
-                    <h3 className="text-lg font-bold text-white">Marketplace & Revenue Control Center</h3>
-                  </div>
-                  <p className="text-slate-400 text-[11px]">
-                    Manage institutional accounts, product pricing, API provisioning keys, and financial transactions.
-                  </p>
-                </div>
-
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Total Gross Revenue</span>
-                  <span className="text-2xl font-bold text-emerald-400">${totalRev.toLocaleString()} USD</span>
-                  <span className="text-[9px] text-slate-500 block">Subscriptions & Report Sales</span>
-                </div>
-
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Institutional Customers</span>
-                  <span className="text-2xl font-bold text-indigo-300">{orgs.length} Active Orgs</span>
-                  <span className="text-[9px] text-slate-500 block">Government & Enterprise</span>
-                </div>
-              </div>
-
-              {/* Grid 1: Customer Organizations */}
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-4">
-                <h4 className="font-bold text-sm text-white flex items-center justify-between">
-                  <span>Registered Institutional Customers ({orgs.length})</span>
-                  <span className="text-slate-400 font-normal text-xs">Enterprise Isolation Active</span>
-                </h4>
-
-                <div className="divide-y divide-slate-800">
-                  {orgs.map(org => (
-                    <div key={org.organizationId} className="py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-white">{org.organizationName}</span>
-                          <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 rounded text-[9px]">
-                            {org.organizationType}
-                          </span>
-                        </div>
-                        <span className="text-[10px] text-slate-400 block">
-                          Country: {org.country} • Industry: {org.industry} • Team: {org.teamMembers.length} Members
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded font-bold text-[10px]">
-                          {org.subscriptionPlan} PLAN
-                        </span>
-                        <span className="text-[10px] text-slate-500">Joined: {org.createdDate}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Grid 2: Revenue Invoices & API Telemetry */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-4">
-                  <h4 className="font-bold text-sm text-white flex items-center justify-between">
-                    <span>Recent Financial Invoices & Sales</span>
-                    <span className="text-slate-400 text-xs">Audit Compliant</span>
-                  </h4>
-
-                  <div className="space-y-3">
-                    {invoices.map(inv => (
-                      <div key={inv.invoiceId} className="p-3 bg-slate-950 rounded-xl border border-slate-800/80 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-white">{inv.orgName}</span>
-                          <span className="font-bold text-emerald-400">${inv.amountUSD} USD</span>
-                        </div>
-                        <p className="text-slate-400 text-[11px]">{inv.description}</p>
-                        <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1">
-                          <span>Date: {inv.date}</span>
-                          <span className="text-emerald-400 font-bold">STATUS: {inv.status}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-4">
-                  <h4 className="font-bold text-sm text-white flex items-center justify-between">
-                    <span>API Credentials & Quota Telemetry</span>
-                    <span className="text-slate-400 text-xs">{apiKeys.length} Active Keys</span>
-                  </h4>
-
-                  <div className="space-y-3">
-                    {apiKeys.map(k => (
-                      <div key={k.keyId} className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-indigo-300">{k.name}</span>
-                          <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded text-[9px] font-bold">ACTIVE</span>
-                        </div>
-                        <div className="flex items-center justify-between text-[10px] text-slate-400">
-                          <span>Quota: {k.monthlyRequestsUsed.toLocaleString()} / {k.monthlyQuota.toLocaleString()} reqs</span>
-                          <span>Rate Limit: {k.rateLimitPerMin}/min</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           );
         })()}

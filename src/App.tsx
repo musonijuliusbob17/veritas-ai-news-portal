@@ -37,11 +37,6 @@ import { LanguageTranslatorModal } from './components/LanguageTranslatorModal';
 import { VeritasKnowledgeLibraryModal } from './components/VeritasKnowledgeLibraryModal';
 import { VeritasIntelligenceCommandCenterModal } from './components/VeritasIntelligenceCommandCenterModal';
 import { AiSearchAssistantModal } from './components/AiSearchAssistantModal';
-import { AutonomousNewsroomModal } from './components/AutonomousNewsroomModal';
-import { GeopoliticalSimulationModal } from './components/GeopoliticalSimulationModal';
-import { SovereignComputeModal } from './components/SovereignComputeModal';
-import { GlobalGovernanceCommandModal } from './components/GlobalGovernanceCommandModal';
-import { QuantumVerificationModal } from './components/QuantumVerificationModal';
 import { SuggestedForYouSection } from './components/SuggestedForYouSection';
 import { WhatsAppIntegration } from './components/WhatsAppIntegration';
 import { AudienceIntelligenceService } from './services/AudienceIntelligenceService';
@@ -111,11 +106,6 @@ export default function App() {
   const [showLanguageTranslator, setShowLanguageTranslator] = useState<boolean>(false);
   const [showKnowledgeLibrary, setShowKnowledgeLibrary] = useState<boolean>(false);
   const [showCommandCenter, setShowCommandCenter] = useState<boolean>(false);
-  const [showAutonomousNewsroom, setShowAutonomousNewsroom] = useState<boolean>(false);
-  const [showGeopoliticalSimulation, setShowGeopoliticalSimulation] = useState<boolean>(false);
-  const [showSovereignCompute, setShowSovereignCompute] = useState<boolean>(false);
-  const [showGlobalGovernance, setShowGlobalGovernance] = useState<boolean>(false);
-  const [showQuantumVerification, setShowQuantumVerification] = useState<boolean>(false);
   const [showAiSearch, setShowAiSearch] = useState<boolean>(false);
 
   // Sync Dark Mode class on <html> element
@@ -278,11 +268,6 @@ export default function App() {
         onOpenLanguageTranslator={() => setShowLanguageTranslator(true)}
         onOpenKnowledgeLibrary={() => setShowKnowledgeLibrary(true)}
         onOpenCommandCenter={() => setShowCommandCenter(true)}
-        onOpenAutonomousNewsroom={() => setShowAutonomousNewsroom(true)}
-        onOpenGeopoliticalSimulation={() => setShowGeopoliticalSimulation(true)}
-        onOpenSovereignCompute={() => setShowSovereignCompute(true)}
-        onOpenGlobalGovernance={() => setShowGlobalGovernance(true)}
-        onOpenQuantumVerification={() => setShowQuantumVerification(true)}
         onOpenAiSearch={() => setShowAiSearch(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -671,36 +656,6 @@ export default function App() {
           onClose={() => setShowAiSearch(false)}
           articles={articles}
           onSelectArticle={(art) => setSelectedArticle(art)}
-        />
-      )}
-
-      {showAutonomousNewsroom && (
-        <AutonomousNewsroomModal
-          onClose={() => setShowAutonomousNewsroom(false)}
-        />
-      )}
-
-      {showGeopoliticalSimulation && (
-        <GeopoliticalSimulationModal
-          onClose={() => setShowGeopoliticalSimulation(false)}
-        />
-      )}
-
-      {showSovereignCompute && (
-        <SovereignComputeModal
-          onClose={() => setShowSovereignCompute(false)}
-        />
-      )}
-
-      {showGlobalGovernance && (
-        <GlobalGovernanceCommandModal
-          onClose={() => setShowGlobalGovernance(false)}
-        />
-      )}
-
-      {showQuantumVerification && (
-        <QuantumVerificationModal
-          onClose={() => setShowQuantumVerification(false)}
         />
       )}
 

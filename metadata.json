@@ -1,6 +1,6 @@
 {
-  "name": "Remix Remix Veritas Global AI News Portal",
-  "description": "Enterprise AI-Powered Global News Intelligence Platform with Real-Time Verification, Predictive Forecasts, Crisis Radar, and Research Workspace",
+  "name": "Remix Veritas Global AI News Portal",
+  "description": "Enterprise AI-Powered Global News Intelligence Platform by Rebero Incoparated Tech ltd. featuring Multilingual AI Translation, Real-Time Verification, and Intelligence Workspaces",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

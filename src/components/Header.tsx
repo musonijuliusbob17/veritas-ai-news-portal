@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Search, Sun, Moon, Radio, Tv, ShieldCheck, 
   Bookmark, Bell, User, BarChart2, Cpu, RefreshCw, Volume2, Settings,
-  Globe, Network, Code, ShieldAlert, Sparkles, Bot, Compass, UserCheck, Building2, Info, Activity, Landmark, Terminal, BookOpen, Server, Layers, Lock
+  Globe, Network, Code, ShieldAlert, Sparkles, Bot, Compass, UserCheck, Building2, Info, Activity, Landmark, Terminal, BookOpen
 } from 'lucide-react';
 import { SupportedLanguage, UserPreferences, WeatherData, StockTickerItem } from '../types';
 import { WhatsAppIntegration } from './WhatsAppIntegration';
@@ -36,11 +36,6 @@ interface HeaderProps {
   onOpenLanguageTranslator?: () => void;
   onOpenKnowledgeLibrary?: () => void;
   onOpenCommandCenter?: () => void;
-  onOpenAutonomousNewsroom?: () => void;
-  onOpenGeopoliticalSimulation?: () => void;
-  onOpenSovereignCompute?: () => void;
-  onOpenGlobalGovernance?: () => void;
-  onOpenQuantumVerification?: () => void;
   onOpenAiSearch?: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
@@ -89,11 +84,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenLanguageTranslator,
   onOpenKnowledgeLibrary,
   onOpenCommandCenter,
-  onOpenAutonomousNewsroom,
-  onOpenGeopoliticalSimulation,
-  onOpenSovereignCompute,
-  onOpenGlobalGovernance,
-  onOpenQuantumVerification,
   onOpenAiSearch,
   searchQuery,
   onSearchChange,
@@ -453,61 +443,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Bot className="w-4 h-4 text-purple-500" />
           </button>
-
-          {/* Phase 7: Autonomous AI Newsroom */}
-          {onOpenAutonomousNewsroom && (
-            <button
-              onClick={onOpenAutonomousNewsroom}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hidden sm:block"
-              title="Autonomous AI Newsroom Studio (Phase 7)"
-            >
-              <Cpu className="w-4 h-4 text-indigo-400 animate-pulse" />
-            </button>
-          )}
-
-          {/* Phase 8: Geopolitical Predictive Simulation & Crisis War-Room */}
-          {onOpenGeopoliticalSimulation && (
-            <button
-              onClick={onOpenGeopoliticalSimulation}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-950/50 hover:text-rose-600 dark:hover:text-rose-400 transition-colors hidden sm:block"
-              title="Geopolitical Simulation & Crisis War-Room (Phase 8)"
-            >
-              <ShieldAlert className="w-4 h-4 text-rose-400 animate-pulse" />
-            </button>
-          )}
-
-          {/* Phase 9: Sovereign AI Compute Vault */}
-          {onOpenSovereignCompute && (
-            <button
-              onClick={onOpenSovereignCompute}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors hidden sm:block"
-              title="Sovereign AI Compute & Edge Telemetry Vault (Phase 9)"
-            >
-              <Server className="w-4 h-4 text-cyan-400 animate-pulse" />
-            </button>
-          )}
-
-          {/* Phase 10: Master Governance & Command Vault */}
-          {onOpenGlobalGovernance && (
-            <button
-              onClick={onOpenGlobalGovernance}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hidden sm:block"
-              title="Veritas Master Governance Vault (Phase 10 Orchestrated)"
-            >
-              <Layers className="w-4 h-4 text-indigo-400 animate-pulse" />
-            </button>
-          )}
-
-          {/* Phase 11: Quantum Cryptographic Verification Vault */}
-          {onOpenQuantumVerification && (
-            <button
-              onClick={onOpenQuantumVerification}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-950/50 hover:text-purple-600 dark:hover:text-purple-400 transition-colors hidden sm:block"
-              title="Quantum-Resistant Cryptographic Verification Vault (Phase 11 Final Suite)"
-            >
-              <Lock className="w-4 h-4 text-purple-400 animate-pulse" />
-            </button>
-          )}
 
           {/* Live Geospatial Map */}
           <button

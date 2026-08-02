@@ -32,10 +32,10 @@ export class SourceVerificationNetwork {
         statementSummary: article.summaryShort
       },
       ...coverage.map(c => ({
-        publisherName: c.publisherName,
-        reliabilityScore: c.trustScore,
+        publisherName: c.publisher.name,
+        reliabilityScore: c.publisher.trustScore,
         claimStatus: 'CONFIRMS' as const,
-        statementSummary: c.articleTitle
+        statementSummary: c.headline
       }))
     ];
 

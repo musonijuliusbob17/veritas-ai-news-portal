@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Article } from '../types';
-import { IntelligenceWorkspace } from './IntelligenceWorkspace';
 import { 
   ShieldCheck, Cpu, Database, Award, Bot, AlertTriangle, Layers, Activity, 
   Globe, FileText, CheckCircle2, Lock, Search, RefreshCw, X, ArrowRight, Zap, 
@@ -117,7 +116,7 @@ export const IntelligenceOperatingSystemModal: React.FC<IntelligenceOperatingSys
   onClose,
   onSelectArticle
 }) => {
-  const [activeTab, setActiveTab] = useState<'workspace' | 'os' | 'redteam' | 'memory' | 'quality' | 'certification' | 'copilot'>('workspace');
+  const [activeTab, setActiveTab] = useState<'os' | 'redteam' | 'memory' | 'quality' | 'certification' | 'copilot'>('os');
   const [selectedObj, setSelectedObj] = useState<IntelligenceObject>(INTELLIGENCE_OBJECTS[0]);
   const [copilotQuery, setCopilotQuery] = useState<string>('');
   const [copilotResponse, setCopilotResponse] = useState<string | null>(null);
@@ -165,14 +164,6 @@ export const IntelligenceOperatingSystemModal: React.FC<IntelligenceOperatingSys
 
         {/* Navigation Bar */}
         <div className="px-6 py-3 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center gap-2 text-xs">
-          <button
-            onClick={() => setActiveTab('workspace')}
-            className={`px-4 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-              activeTab === 'workspace' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            🤖 VIOS Agent Workspace
-          </button>
           <button
             onClick={() => setActiveTab('os')}
             className={`px-4 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
@@ -225,10 +216,6 @@ export const IntelligenceOperatingSystemModal: React.FC<IntelligenceOperatingSys
 
         {/* Content Body */}
         <div className="flex-1 p-6 overflow-y-auto bg-slate-950 space-y-6">
-          {activeTab === 'workspace' && (
-            <IntelligenceWorkspace articles={articles} onSelectArticle={onSelectArticle} />
-          )}
-
           {/* TAB 1: OS OBJECT REGISTRY */}
           {activeTab === 'os' && (
             <div className="flex flex-col md:flex-row gap-6">

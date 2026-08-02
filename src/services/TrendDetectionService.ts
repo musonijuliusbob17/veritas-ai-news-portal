@@ -9,8 +9,6 @@ export interface TrendItem {
   searchQueryVolume: number;
   articleCount: number;
   avgReadingTimeSeconds: number;
-  knowledgeGraphActivityScore: number;
-  audienceInterestScore: number;
   detectedAt: string;
   recommendation: string;
   sampleHeadline: string;
@@ -21,71 +19,63 @@ export class TrendDetectionService {
   private static STORAGE_KEY = 'veritas_trend_insights';
 
   /**
-   * Generates real-time trend intelligence based on search queries, reading time, category growth, audience interests, and graph activity.
+   * Generates real-time trend intelligence based on system metrics, search activity, and article performance.
    */
   public static detectTrends(articles: Article[]): TrendItem[] {
     const defaultTrends: TrendItem[] = [
       {
         id: 'tr_africa_ai',
-        topic: 'Pan-African Artificial Intelligence Regulatory Accord',
+        topic: 'Africa AI & Tech Innovation Hubs',
         category: 'Artificial Intelligence',
         growthPercentage: 250,
         momentum: 'EXPLOSIVE',
         searchQueryVolume: 14200,
         articleCount: articles.filter(a => a.category === 'Artificial Intelligence' || a.region === 'Africa').length,
-        avgReadingTimeSeconds: 210,
-        knowledgeGraphActivityScore: 98,
-        audienceInterestScore: 95,
+        avgReadingTimeSeconds: 180,
         detectedAt: new Date().toISOString(),
-        recommendation: 'Create coverage: "Pan-African Sovereign Artificial Intelligence Intelligence Report"',
+        recommendation: 'Create special coverage category: Africa AI Innovation',
         sampleHeadline: 'Rwanda and Kenya Lead Pan-African Artificial Intelligence Regulatory Frameworks',
         keyEntities: ['Rwanda', 'Kenya', 'Kigali AI Hub', 'African Union', 'AI Policy']
       },
       {
         id: 'tr_green_transition',
-        topic: 'East Africa Renewable Energy Integration Corridor',
+        topic: 'African Renewable Energy Investments',
         category: 'Climate',
         growthPercentage: 180,
         momentum: 'EXPLOSIVE',
         searchQueryVolume: 9800,
         articleCount: articles.filter(a => a.category === 'Climate' || a.category === 'Technology').length,
-        avgReadingTimeSeconds: 240,
-        knowledgeGraphActivityScore: 91,
-        audienceInterestScore: 89,
+        avgReadingTimeSeconds: 210,
         detectedAt: new Date().toISOString(),
-        recommendation: 'Create coverage: "East Africa Renewable Energy Intelligence Report"',
+        recommendation: 'Highlight in WhatsApp Daily Energy Digest & Knowledge Library',
         sampleHeadline: 'Pan-African Hydroelectric and Solar Grids Attract $4.2B International Capital',
         keyEntities: ['Solar Grid', 'East Africa Hydro', 'Clean Energy', 'Green Capital']
       },
       {
         id: 'tr_eac_trade',
-        topic: 'AfCFTA Digital Customs Clearance & Cross-Border Payments',
+        topic: 'East African Community Trade Agreements & AfCFTA',
         category: 'Business',
         growthPercentage: 120,
         momentum: 'STEADY_RISE',
         searchQueryVolume: 7400,
         articleCount: articles.filter(a => a.category === 'Business' || a.category === 'Politics').length,
-        avgReadingTimeSeconds: 180,
-        knowledgeGraphActivityScore: 86,
-        audienceInterestScore: 84,
+        avgReadingTimeSeconds: 160,
         detectedAt: new Date().toISOString(),
-        recommendation: 'Create coverage: "AfCFTA Unified Digital Customs Implementation Blueprint"',
+        recommendation: 'Promote AfCFTA trade dossier on Homepage ticker',
         sampleHeadline: 'Digital Border Clearances Cut Cargo Transit Times by 40% Across EAC Corridor',
         keyEntities: ['EAC', 'AfCFTA', 'Kigali Dry Port', 'Mombasa Corridor', 'Trade Policy']
       },
       {
         id: 'tr_global_semiconductors',
-        topic: 'Global Quantum Compute & Rare Mineral Processing',
+        topic: 'Global Semiconductor & Quantum Hardware Supply',
         category: 'Technology',
         growthPercentage: 95,
         momentum: 'STEADY_RISE',
         searchQueryVolume: 6100,
         articleCount: articles.filter(a => a.category === 'Technology').length,
-        avgReadingTimeSeconds: 260,
-        knowledgeGraphActivityScore: 82,
-        audienceInterestScore: 78,
+        avgReadingTimeSeconds: 240,
         detectedAt: new Date().toISOString(),
-        recommendation: 'Create coverage: "Sovereign Quantum Compute & Rare Mineral Supply Risk Dossier"',
+        recommendation: 'Schedule Expert Q&A Analysis feature article',
         sampleHeadline: 'Next-Gen Chips & Rare Earth Mineral Processing Shift Southward',
         keyEntities: ['Semiconductors', 'Lithium', 'Supply Chain', 'Global Trade']
       }
@@ -93,7 +83,9 @@ export class TrendDetectionService {
 
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(defaultTrends));
-    } catch (e) {}
+    } catch (e) {
+      // safe fallback
+    }
 
     return defaultTrends;
   }
@@ -106,4 +98,3 @@ export class TrendDetectionService {
     return [];
   }
 }
-
