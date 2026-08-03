@@ -21,6 +21,8 @@ export type Category =
 
 export type Region = 
   | 'Global'
+  | 'Rwanda'
+  | 'East Africa'
   | 'Africa'
   | 'Europe'
   | 'Asia'

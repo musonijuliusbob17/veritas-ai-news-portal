@@ -24,6 +24,12 @@ export interface GraphEdge {
   targetId: string;
   relation: string; // e.g. "headquartered_in", "regulates", "invested_in", "pioneers", "partnered_with"
   strength: number; // 0 - 100
+  relationshipScores?: {
+    investmentScore: number;
+    partnershipScore: number;
+    competitionScore: number;
+    policyScore: number;
+  };
 }
 
 export interface KnowledgeGraphData {
@@ -33,7 +39,7 @@ export interface KnowledgeGraphData {
 
 export class KnowledgeGraphEngine {
   /**
-   * Constructs an interconnected Knowledge Graph from system articles.
+   * Constructs an interconnected Knowledge Graph from system articles with relationship scoring.
    */
   public static buildGraph(articles: Article[]): KnowledgeGraphData {
     const nodesMap = new Map<string, GraphEntityNode>();
@@ -55,17 +61,71 @@ export class KnowledgeGraphEngine {
 
     seedNodes.forEach(n => nodesMap.set(n.id, n));
 
-    // Baseline Edges
+    // Baseline Edges with Relationship Scoring Breakdown
     edges.push(
-      { sourceId: 'e_paul_kagame', targetId: 'e_rwanda', relation: 'leads_nation', strength: 95 },
-      { sourceId: 'e_rwanda', targetId: 'e_kigali_hub', relation: 'hosts_center', strength: 90 },
-      { sourceId: 'e_kigali_hub', targetId: 'e_ai_tech', relation: 'pioneers_tech', strength: 92 },
-      { sourceId: 'e_rwanda', targetId: 'e_au', relation: 'member_state', strength: 85 },
-      { sourceId: 'e_au', targetId: 'e_afcfta', relation: 'governs_agreement', strength: 95 },
-      { sourceId: 'e_kenya', targetId: 'e_renewable_energy', relation: 'invests_in', strength: 88 },
-      { sourceId: 'e_rwanda', targetId: 'e_fintech', relation: 'regulates_digital_pay', strength: 87 },
-      { sourceId: 'e_world_bank', targetId: 'e_renewable_energy', relation: 'funds_project', strength: 82 },
-      { sourceId: 'e_afcfta', targetId: 'e_fintech', relation: 'integrates_payments', strength: 90 }
+      { 
+        sourceId: 'e_paul_kagame', 
+        targetId: 'e_rwanda', 
+        relation: 'leads_nation', 
+        strength: 95,
+        relationshipScores: { investmentScore: 80, partnershipScore: 95, competitionScore: 10, policyScore: 98 }
+      },
+      { 
+        sourceId: 'e_rwanda', 
+        targetId: 'e_kigali_hub', 
+        relation: 'hosts_center', 
+        strength: 90,
+        relationshipScores: { investmentScore: 90, partnershipScore: 92, competitionScore: 15, policyScore: 88 }
+      },
+      { 
+        sourceId: 'e_kigali_hub', 
+        targetId: 'e_ai_tech', 
+        relation: 'pioneers_tech', 
+        strength: 92,
+        relationshipScores: { investmentScore: 94, partnershipScore: 90, competitionScore: 60, policyScore: 85 }
+      },
+      { 
+        sourceId: 'e_rwanda', 
+        targetId: 'e_au', 
+        relation: 'member_state', 
+        strength: 85,
+        relationshipScores: { investmentScore: 70, partnershipScore: 95, competitionScore: 20, policyScore: 92 }
+      },
+      { 
+        sourceId: 'e_au', 
+        targetId: 'e_afcfta', 
+        relation: 'governs_agreement', 
+        strength: 95,
+        relationshipScores: { investmentScore: 85, partnershipScore: 98, competitionScore: 10, policyScore: 100 }
+      },
+      { 
+        sourceId: 'e_kenya', 
+        targetId: 'e_renewable_energy', 
+        relation: 'invests_in', 
+        strength: 88,
+        relationshipScores: { investmentScore: 92, partnershipScore: 88, competitionScore: 40, policyScore: 85 }
+      },
+      { 
+        sourceId: 'e_rwanda', 
+        targetId: 'e_fintech', 
+        relation: 'regulates_digital_pay', 
+        strength: 87,
+        relationshipScores: { investmentScore: 85, partnershipScore: 88, competitionScore: 50, policyScore: 90 }
+      },
+      { 
+        sourceId: 'e_world_bank', 
+        targetId: 'e_renewable_energy', 
+        relation: 'funds_project', 
+        strength: 82,
+        relationshipScores: { investmentScore: 95, partnershipScore: 80, competitionScore: 10, policyScore: 75 }
+      },
+      { 
+        sourceId: 'e_afcfta', 
+        targetId: 'e_fintech', 
+        relation: 'integrates_payments', 
+        strength: 90,
+        relationshipScores: { investmentScore: 88, partnershipScore: 92, competitionScore: 35, policyScore: 95 }
+      }
     );
 
     // Dynamically augment graph with article entities
@@ -82,16 +142,40 @@ export class KnowledgeGraphEngine {
       });
 
       if (art.country === 'Rwanda') {
-        edges.push({ sourceId: artNodeId, targetId: 'e_rwanda', relation: 'reports_on', strength: 90 });
+        edges.push({ 
+          sourceId: artNodeId, 
+          targetId: 'e_rwanda', 
+          relation: 'reports_on', 
+          strength: 90,
+          relationshipScores: { investmentScore: 75, partnershipScore: 85, competitionScore: 20, policyScore: 90 }
+        });
       } else if (art.country === 'Kenya') {
-        edges.push({ sourceId: artNodeId, targetId: 'e_kenya', relation: 'reports_on', strength: 90 });
+        edges.push({ 
+          sourceId: artNodeId, 
+          targetId: 'e_kenya', 
+          relation: 'reports_on', 
+          strength: 90,
+          relationshipScores: { investmentScore: 80, partnershipScore: 82, competitionScore: 25, policyScore: 85 }
+        });
       }
 
       if (art.category === 'Artificial Intelligence' || art.category === 'Technology') {
-        edges.push({ sourceId: artNodeId, targetId: 'e_ai_tech', relation: 'analyzes_tech', strength: 88 });
+        edges.push({ 
+          sourceId: artNodeId, 
+          targetId: 'e_ai_tech', 
+          relation: 'analyzes_tech', 
+          strength: 88,
+          relationshipScores: { investmentScore: 90, partnershipScore: 85, competitionScore: 65, policyScore: 80 }
+        });
       }
       if (art.category === 'Climate') {
-        edges.push({ sourceId: artNodeId, targetId: 'e_renewable_energy', relation: 'covers_climate', strength: 85 });
+        edges.push({ 
+          sourceId: artNodeId, 
+          targetId: 'e_renewable_energy', 
+          relation: 'covers_climate', 
+          strength: 85,
+          relationshipScores: { investmentScore: 85, partnershipScore: 88, competitionScore: 30, policyScore: 85 }
+        });
       }
     });
 
@@ -99,5 +183,25 @@ export class KnowledgeGraphEngine {
       nodes: Array.from(nodesMap.values()),
       edges
     };
+  }
+
+  /**
+   * AI Reasoning engine over entity relationships
+   */
+  public static queryEntityReasoning(entityId: string, graph: KnowledgeGraphData): string {
+    const node = graph.nodes.find(n => n.id === entityId);
+    if (!node) return 'Entity not found in active knowledge graph.';
+
+    const connectedEdges = graph.edges.filter(e => e.sourceId === entityId || e.targetId === entityId);
+    if (connectedEdges.length === 0) return `${node.name} is currently an isolated node without strong relationship links.`;
+
+    const summary = connectedEdges.map(e => {
+      const otherId = e.sourceId === entityId ? e.targetId : e.sourceId;
+      const otherNode = graph.nodes.find(n => n.id === otherId);
+      const scores = e.relationshipScores ? ` (Investment: ${e.relationshipScores.investmentScore}%, Partnership: ${e.relationshipScores.partnershipScore}%)` : '';
+      return `• ${e.relation.replace(/_/g, ' ')} -> ${otherNode?.name || otherId} [Strength: ${e.strength}%]${scores}`;
+    }).join('\n');
+
+    return `AI Relationship Reasoning for **${node.name}** (${node.type}):\n\n${summary}`;
   }
 }

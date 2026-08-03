@@ -27,6 +27,13 @@ import { EnterpriseWorkspaceModal } from './components/EnterpriseWorkspaceModal'
 import { AiTransparencyCenterModal } from './components/AiTransparencyCenterModal';
 import { GlobalRiskIndexModal } from './components/GlobalRiskIndexModal';
 import { CompanyGovProfilesModal } from './components/CompanyGovProfilesModal';
+import { CountryIntelligenceProfileModal } from './components/CountryIntelligenceProfileModal';
+import { ExecutiveIntelligenceDashboardModal } from './components/ExecutiveIntelligenceDashboardModal';
+import { PromptEngineeringFrameworkModal } from './components/PromptEngineeringFrameworkModal';
+import { SecurityArchitectureModal } from './components/SecurityArchitectureModal';
+import { Roadmap2035Modal } from './components/Roadmap2035Modal';
+import { PrincipalCouncilAuditModal } from './components/PrincipalCouncilAuditModal';
+import { UniversalCollectionModal } from './components/UniversalCollectionModal';
 import { DeveloperApiMarketplaceModal } from './components/DeveloperApiMarketplaceModal';
 import { IntelligenceOperationsCenterModal } from './components/IntelligenceOperationsCenterModal';
 import { GlobalDigitalTwinModal } from './components/GlobalDigitalTwinModal';
@@ -36,9 +43,13 @@ import { IntelligenceExchangeModal } from './components/IntelligenceExchangeModa
 import { LanguageTranslatorModal } from './components/LanguageTranslatorModal';
 import { VeritasKnowledgeLibraryModal } from './components/VeritasKnowledgeLibraryModal';
 import { VeritasIntelligenceCommandCenterModal } from './components/VeritasIntelligenceCommandCenterModal';
-import { AiSearchAssistantModal } from './components/AiSearchAssistantModal';
+import { EnterpriseIntelligenceSearchModal } from './components/EnterpriseIntelligenceSearchModal';
+import { NarrativeIntelligenceModal } from './components/NarrativeIntelligenceModal';
+import { VcioBrainModal } from './components/VcioBrainModal';
+import { VciaInvestigativeModal } from './components/VciaInvestigativeModal';
 import { SuggestedForYouSection } from './components/SuggestedForYouSection';
 import { WhatsAppIntegration } from './components/WhatsAppIntegration';
+import { LiveUpdatesFeed } from './components/LiveUpdatesFeed';
 import { AudienceIntelligenceService } from './services/AudienceIntelligenceService';
 import { ArticleLifecycleManager } from './services/newsLifecycleService';
 import { Footer } from './components/Footer';
@@ -71,10 +82,12 @@ export default function App() {
 
   // Filters
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<Region>('Global');
   const [selectedSort, setSelectedSort] = useState<'latest' | 'trending' | 'confidence'>('latest');
   const [selectedPublisher, setSelectedPublisher] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Modals & Overlays
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
@@ -98,6 +111,13 @@ export default function App() {
   const [showTransparencyCenter, setShowTransparencyCenter] = useState<boolean>(false);
   const [showGlobalRiskIndex, setShowGlobalRiskIndex] = useState<boolean>(false);
   const [showCompanyGovProfiles, setShowCompanyGovProfiles] = useState<boolean>(false);
+  const [showCountryProfiles, setShowCountryProfiles] = useState<boolean>(false);
+  const [showExecutiveDashboard, setShowExecutiveDashboard] = useState<boolean>(false);
+  const [showPromptFramework, setShowPromptFramework] = useState<boolean>(false);
+  const [showSecurityArchitecture, setShowSecurityArchitecture] = useState<boolean>(false);
+  const [showRoadmap2035, setShowRoadmap2035] = useState<boolean>(false);
+  const [showPrincipalCouncilAudit, setShowPrincipalCouncilAudit] = useState<boolean>(false);
+  const [showUniversalCollection, setShowUniversalCollection] = useState<boolean>(false);
   const [showIntelligenceOps, setShowIntelligenceOps] = useState<boolean>(false);
   const [showDigitalTwin, setShowDigitalTwin] = useState<boolean>(false);
   const [showOsCore, setShowOsCore] = useState<boolean>(false);
@@ -107,6 +127,9 @@ export default function App() {
   const [showKnowledgeLibrary, setShowKnowledgeLibrary] = useState<boolean>(false);
   const [showCommandCenter, setShowCommandCenter] = useState<boolean>(false);
   const [showAiSearch, setShowAiSearch] = useState<boolean>(false);
+  const [showNarrativeEngine, setShowNarrativeEngine] = useState<boolean>(false);
+  const [showVcioBrain, setShowVcioBrain] = useState<boolean>(false);
+  const [showVciaInvestigative, setShowVciaInvestigative] = useState<boolean>(false);
 
   // Sync Dark Mode class on <html> element
   useEffect(() => {
@@ -196,6 +219,7 @@ export default function App() {
       preferredLanguage: 'English'
     });
     setSelectedCategory('All');
+    setSelectedSubcategory('');
     setSelectedRegion('Global');
     setSelectedPublisher(null);
     setSearchQuery('');
@@ -206,6 +230,15 @@ export default function App() {
 
   if (selectedCategory !== 'All' && selectedCategory !== 'Top Stories') {
     displayedArticles = displayedArticles.filter(a => a.category === selectedCategory);
+  }
+  if (selectedSubcategory) {
+    const subQ = selectedSubcategory.toLowerCase();
+    displayedArticles = displayedArticles.filter(a =>
+      a.title.toLowerCase().includes(subQ) ||
+      a.summaryMedium.toLowerCase().includes(subQ) ||
+      a.tags.some(t => t.toLowerCase().includes(subQ)) ||
+      (a.knowledgeTopics && a.knowledgeTopics.some(t => t.toLowerCase().includes(subQ)))
+    );
   }
   if (selectedRegion !== 'Global') {
     displayedArticles = displayedArticles.filter(a => a.region === selectedRegion);
@@ -237,7 +270,7 @@ export default function App() {
   const bookmarkedArticles = articles.filter(a => preferences.bookmarks.includes(a.id));
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors selection:bg-blue-500 selection:text-white">
       {/* Top Main Navigation Header */}
       <Header
         preferences={preferences}
@@ -260,6 +293,13 @@ export default function App() {
         onOpenTransparencyCenter={() => setShowTransparencyCenter(true)}
         onOpenGlobalRiskIndex={() => setShowGlobalRiskIndex(true)}
         onOpenCompanyGovProfiles={() => setShowCompanyGovProfiles(true)}
+        onOpenCountryProfiles={() => setShowCountryProfiles(true)}
+        onOpenExecutiveDashboard={() => setShowExecutiveDashboard(true)}
+        onOpenPromptFramework={() => setShowPromptFramework(true)}
+        onOpenSecurityArchitecture={() => setShowSecurityArchitecture(true)}
+        onOpenRoadmap2035={() => setShowRoadmap2035(true)}
+        onOpenPrincipalCouncilAudit={() => setShowPrincipalCouncilAudit(true)}
+        onOpenUniversalCollection={() => setShowUniversalCollection(true)}
         onOpenIntelligenceOps={() => setShowIntelligenceOps(true)}
         onOpenDigitalTwin={() => setShowDigitalTwin(true)}
         onOpenOsCore={() => setShowOsCore(true)}
@@ -269,10 +309,15 @@ export default function App() {
         onOpenKnowledgeLibrary={() => setShowKnowledgeLibrary(true)}
         onOpenCommandCenter={() => setShowCommandCenter(true)}
         onOpenAiSearch={() => setShowAiSearch(true)}
+        onOpenNarrativeEngine={() => setShowNarrativeEngine(true)}
+        onOpenVcioBrain={() => setShowVcioBrain(true)}
+        onOpenVciaInvestigative={() => setShowVciaInvestigative(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         weather={weather}
         stocks={stocks}
+        articles={articles}
+        onSelectArticle={(art) => setSelectedArticle(art)}
       />
 
       {/* Breaking Ticker Bar */}
@@ -289,20 +334,30 @@ export default function App() {
         onSelectRegion={setSelectedRegion}
         selectedSort={selectedSort}
         onSelectSort={setSelectedSort}
+        articles={articles}
+        selectedSubcategory={selectedSubcategory}
+        onSelectSubcategory={setSelectedSubcategory}
+        viewMode={viewMode}
+        onToggleViewMode={setViewMode}
       />
 
       {/* Main Content Area */}
       <main className="space-y-8 pb-12">
         {/* Active Filters Bar if any active */}
-        {(selectedPublisher || searchQuery || selectedCategory !== 'All' || selectedRegion !== 'Global') && (
+        {(selectedPublisher || searchQuery || selectedCategory !== 'All' || selectedRegion !== 'Global' || selectedSubcategory) && (
           <div className="max-w-7xl mx-auto px-4 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-slate-500 font-semibold flex items-center gap-1">
                 <Filter className="w-3.5 h-3.5" /> Active Filters:
               </span>
               {selectedCategory !== 'All' && (
                 <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-bold">
                   Category: {selectedCategory}
+                </span>
+              )}
+              {selectedSubcategory && (
+                <span className="px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300 font-bold">
+                  Topic: {selectedSubcategory}
                 </span>
               )}
               {selectedRegion !== 'Global' && (
@@ -324,24 +379,31 @@ export default function App() {
 
             <button
               onClick={handleResetPersonalization}
-              className="text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1"
+              className="text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
             >
               <RefreshCw className="w-3 h-3" /> Reset Personalization Filters
             </button>
           </div>
         )}
 
-        {/* Hero Top Story Section (Only when no search query active) */}
+        {/* Hero Top Story Sliding Carousel Section (Only when no search query active) */}
         {!searchQuery && leadArticle && (
           <HeroSection
             leadArticle={leadArticle}
             topStories={secondaryArticles}
+            allArticles={articles}
             onSelectArticle={(art) => setSelectedArticle(art)}
             onToggleBookmark={handleToggleBookmark}
             bookmarkedIds={preferences.bookmarks}
             onOpenClusterComparison={(art) => setClusterComparisonArticle(art)}
           />
         )}
+
+        {/* Live Updates Stream Component */}
+        <LiveUpdatesFeed
+          articles={articles}
+          onSelectArticle={(art) => setSelectedArticle(art)}
+        />
 
         {/* Suggested For You Recommendation Engine (Only when no search query active or when filtering) */}
         {!searchQuery && (
@@ -360,7 +422,7 @@ export default function App() {
           <WhatsAppIntegration variant="banner" location="homepage_banner" language={preferences.preferredLanguage} article={articles[0]} />
         </section>
 
-        {/* Article Grid Section */}
+        {/* Article Grid / Feed Section */}
         <section className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-200 dark:border-slate-800">
             <h2 className="font-extrabold text-xl text-slate-900 dark:text-white flex items-center gap-2">
@@ -377,13 +439,13 @@ export default function App() {
               <p className="text-slate-500 text-sm">No stories match your search criteria or filters.</p>
               <button
                 onClick={handleResetPersonalization}
-                className="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 cursor-pointer"
               >
                 Clear All Filters
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
               {displayedArticles.map(article => (
                 <ArticleCard
                   key={article.id}
@@ -460,7 +522,7 @@ export default function App() {
       )}
 
       {showAdminModal && (
-        <AdminDashboardModal onClose={() => setShowAdminModal(false)} />
+        <AdminDashboardModal onClose={() => setShowAdminModal(false)} articles={articles} />
       )}
 
       {showPublisherDirectory && (
@@ -520,6 +582,56 @@ export default function App() {
           articles={articles}
           onClose={() => setShowCompanyGovProfiles(false)}
           onSelectArticle={(art) => setSelectedArticle(art)}
+        />
+      )}
+
+      {showCountryProfiles && (
+        <CountryIntelligenceProfileModal
+          isOpen={showCountryProfiles}
+          onClose={() => setShowCountryProfiles(false)}
+        />
+      )}
+
+      {showExecutiveDashboard && (
+        <ExecutiveIntelligenceDashboardModal
+          isOpen={showExecutiveDashboard}
+          onClose={() => setShowExecutiveDashboard(false)}
+          articles={articles}
+        />
+      )}
+
+      {showPromptFramework && (
+        <PromptEngineeringFrameworkModal
+          isOpen={showPromptFramework}
+          onClose={() => setShowPromptFramework(false)}
+        />
+      )}
+
+      {showSecurityArchitecture && (
+        <SecurityArchitectureModal
+          isOpen={showSecurityArchitecture}
+          onClose={() => setShowSecurityArchitecture(false)}
+        />
+      )}
+
+      {showRoadmap2035 && (
+        <Roadmap2035Modal
+          isOpen={showRoadmap2035}
+          onClose={() => setShowRoadmap2035(false)}
+        />
+      )}
+
+      {showPrincipalCouncilAudit && (
+        <PrincipalCouncilAuditModal
+          isOpen={showPrincipalCouncilAudit}
+          onClose={() => setShowPrincipalCouncilAudit(false)}
+        />
+      )}
+
+      {showUniversalCollection && (
+        <UniversalCollectionModal
+          isOpen={showUniversalCollection}
+          onClose={() => setShowUniversalCollection(false)}
         />
       )}
 
@@ -651,11 +763,36 @@ export default function App() {
       )}
 
       {showAiSearch && (
-        <AiSearchAssistantModal
+        <EnterpriseIntelligenceSearchModal
           isOpen={showAiSearch}
           onClose={() => setShowAiSearch(false)}
           articles={articles}
+          initialQuery={searchQuery}
           onSelectArticle={(art) => setSelectedArticle(art)}
+        />
+      )}
+
+      {showNarrativeEngine && (
+        <NarrativeIntelligenceModal
+          isOpen={showNarrativeEngine}
+          onClose={() => setShowNarrativeEngine(false)}
+          articles={articles}
+        />
+      )}
+
+      {showVcioBrain && (
+        <VcioBrainModal
+          isOpen={showVcioBrain}
+          onClose={() => setShowVcioBrain(false)}
+          articles={articles}
+        />
+      )}
+
+      {showVciaInvestigative && (
+        <VciaInvestigativeModal
+          isOpen={showVciaInvestigative}
+          onClose={() => setShowVciaInvestigative(false)}
+          articles={articles}
         />
       )}
 

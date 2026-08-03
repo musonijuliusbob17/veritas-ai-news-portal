@@ -1,6 +1,6 @@
 {
-  "name": "Remix Veritas Global AI News Portal",
-  "description": "Enterprise AI-Powered Global News Intelligence Platform by Rebero Incoparated Tech ltd. featuring Multilingual AI Translation, Real-Time Verification, and Intelligence Workspaces",
+  "name": "Veritas Global Intelligence Operating System",
+  "description": "Enterprise AI-Powered Intelligence Operating System transforming public information into explainable, evidence-backed executive intelligence with VCIO, VCIA, Digital Twin, and Knowledge Graph engines.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

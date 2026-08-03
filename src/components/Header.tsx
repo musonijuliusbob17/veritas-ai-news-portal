@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Search, Sun, Moon, Radio, Tv, ShieldCheck, 
+  Search, Sun, Moon, Radio, Tv, ShieldCheck, Shield, Rocket, Award,
   Bookmark, Bell, User, BarChart2, Cpu, RefreshCw, Volume2, Settings,
-  Globe, Network, Code, ShieldAlert, Sparkles, Bot, Compass, UserCheck, Building2, Info, Activity, Landmark, Terminal, BookOpen
+  Globe, Network, Code, ShieldAlert, Sparkles, Bot, Compass, UserCheck, Building2, Info, Activity, Landmark, Terminal, BookOpen,
+  ChevronDown, Grid, Menu, X, Layers, Clock, History, TrendingUp, Tag, Filter, Check
 } from 'lucide-react';
-import { SupportedLanguage, UserPreferences, WeatherData, StockTickerItem } from '../types';
+import { SupportedLanguage, UserPreferences, WeatherData, StockTickerItem, Article } from '../types';
 import { WhatsAppIntegration } from './WhatsAppIntegration';
 
 interface HeaderProps {
@@ -28,6 +29,13 @@ interface HeaderProps {
   onOpenTransparencyCenter?: () => void;
   onOpenGlobalRiskIndex?: () => void;
   onOpenCompanyGovProfiles?: () => void;
+  onOpenCountryProfiles?: () => void;
+  onOpenExecutiveDashboard?: () => void;
+  onOpenPromptFramework?: () => void;
+  onOpenSecurityArchitecture?: () => void;
+  onOpenRoadmap2035?: () => void;
+  onOpenPrincipalCouncilAudit?: () => void;
+  onOpenUniversalCollection?: () => void;
   onOpenIntelligenceOps?: () => void;
   onOpenDigitalTwin?: () => void;
   onOpenOsCore?: () => void;
@@ -37,10 +45,15 @@ interface HeaderProps {
   onOpenKnowledgeLibrary?: () => void;
   onOpenCommandCenter?: () => void;
   onOpenAiSearch?: () => void;
+  onOpenNarrativeEngine?: () => void;
+  onOpenVcioBrain?: () => void;
+  onOpenVciaInvestigative?: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   weather: WeatherData | null;
   stocks: StockTickerItem[];
+  articles?: Article[];
+  onSelectArticle?: (article: Article) => void;
 }
 
 const LANGUAGES: SupportedLanguage[] = [
@@ -76,6 +89,13 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenTransparencyCenter,
   onOpenGlobalRiskIndex,
   onOpenCompanyGovProfiles,
+  onOpenCountryProfiles,
+  onOpenExecutiveDashboard,
+  onOpenPromptFramework,
+  onOpenSecurityArchitecture,
+  onOpenRoadmap2035,
+  onOpenPrincipalCouncilAudit,
+  onOpenUniversalCollection,
   onOpenIntelligenceOps,
   onOpenDigitalTwin,
   onOpenOsCore,
@@ -85,15 +105,84 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenKnowledgeLibrary,
   onOpenCommandCenter,
   onOpenAiSearch,
+  onOpenNarrativeEngine,
+  onOpenVcioBrain,
+  onOpenVciaInvestigative,
   searchQuery,
   onSearchChange,
   weather,
-  stocks
+  stocks,
+  articles = [],
+  onSelectArticle
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('');
   const [isLiveAudioPlaying, setIsLiveAudioPlaying] = useState<boolean>(false);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  const [showToolsMenu, setShowToolsMenu] = useState<boolean>(false);
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('veritas_recent_searches');
+      return saved ? JSON.parse(saved) : ['Rwanda Tech Hub', 'AI Regulations', 'Global Markets', 'Elections'];
+    } catch {
+      return ['Rwanda Tech Hub', 'AI Regulations', 'Global Markets', 'Elections'];
+    }
+  });
+  const [minTrustFilter, setMinTrustFilter] = useState<number>(0);
   const [scheduleStatus, setScheduleStatus] = useState<string>('Every 3h (Active)');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const TRENDING_SEARCH_TOPICS = [
+    '🇷🇼 Rwanda Tech', '🤖 Gemini 1.5 Pro', '📈 Fed Rates', '🌍 Oil Markets', '🛡️ Cybersecurity', '🪙 Crypto Rules'
+  ];
+
+  // Save query to search history
+  const handleSelectSearchQuery = (query: string) => {
+    onSearchChange(query);
+    if (query.trim()) {
+      const updated = [query, ...recentSearches.filter(q => q !== query)].slice(0, 6);
+      setRecentSearches(updated);
+      try {
+        localStorage.setItem('veritas_recent_searches', JSON.stringify(updated));
+      } catch {}
+    }
+    setIsSearchFocused(false);
+  };
+
+  const handleClearHistory = () => {
+    setRecentSearches([]);
+    try {
+      localStorage.removeItem('veritas_recent_searches');
+    } catch {}
+  };
+
+  // Keyboard shortcut listener for `/` or `Cmd+K`
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && document.activeElement !== searchInputRef.current) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        setIsSearchFocused(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Filter matching articles for live autocomplete
+  const searchSuggestions = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return articles.filter(a => {
+      const matchesText = a.title.toLowerCase().includes(q) ||
+        a.summaryShort.toLowerCase().includes(q) ||
+        a.category.toLowerCase().includes(q) ||
+        a.mainPublisher.name.toLowerCase().includes(q) ||
+        a.tags.some(t => t.toLowerCase().includes(q));
+      const matchesTrust = a.confidenceScore >= minTrustFilter;
+      return matchesText && matchesTrust;
+    }).slice(0, 6);
+  }, [searchQuery, articles, minTrustFilter]);
 
   useEffect(() => {
     const update = () => {
@@ -263,232 +352,217 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <Search className="absolute left-3.5 top-2.5 w-4 h-4 text-slate-400" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search global news by topic, headline, publisher, or region..."
-              className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 placeholder-slate-400 rounded-xl text-sm border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              onFocus={() => setIsSearchFocused(true)}
+              onChange={(e) => {
+                onSearchChange(e.target.value);
+                setIsSearchFocused(true);
+              }}
+              placeholder="Search global news... (Press '/' to focus)"
+              className="w-full pl-10 pr-16 py-2 bg-slate-100 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 placeholder-slate-400 rounded-xl text-sm border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
-            {searchQuery && (
-              <button
-                onClick={() => onSearchChange('')}
-                className="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                Clear
-              </button>
-            )}
+            
+            <div className="absolute right-2.5 top-2 flex items-center gap-1.5">
+              {searchQuery ? (
+                <button
+                  onClick={() => onSearchChange('')}
+                  className="p-0.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-200 dark:bg-slate-700/80 rounded border border-slate-300 dark:border-slate-600">
+                  /
+                </kbd>
+              )}
+            </div>
           </div>
+
+          {/* INSTANT AUTOCOMPLETE & SEARCH POPOVER PANEL */}
+          {isSearchFocused && (
+            <>
+              {/* Invisible Backdrop to close on click outside */}
+              <div 
+                className="fixed inset-0 z-30 bg-black/20"
+                onClick={() => setIsSearchFocused(false)}
+              />
+
+              <div className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-4 text-slate-900 dark:text-slate-100 z-40 max-h-[80vh] overflow-y-auto space-y-4 font-sans text-xs">
+                
+                {/* Search Quick Filters Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 text-[11px] text-slate-500">
+                  <span className="font-bold uppercase tracking-wider flex items-center gap-1 text-blue-600 dark:text-blue-400">
+                    <Sparkles className="w-3.5 h-3.5" /> Veritas Instant Search
+                  </span>
+                  
+                  {/* Launch Enterprise Search Platform Trigger */}
+                  {onOpenAiSearch && (
+                    <button
+                      onClick={() => {
+                        setIsSearchFocused(false);
+                        onOpenAiSearch();
+                      }}
+                      className="px-2.5 py-1 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-lg font-mono font-bold flex items-center gap-1 text-[10px] cursor-pointer shadow-sm"
+                    >
+                      <Sparkles className="w-3 h-3 text-amber-300" />
+                      <span>Enterprise Search Platform (Ctrl+K)</span>
+                    </button>
+                  )}
+
+                  {/* Trust Filter Toggle */}
+                  <div className="flex items-center gap-1">
+                    <span>Min Trust:</span>
+                    <button
+                      onClick={() => setMinTrustFilter(minTrustFilter === 90 ? 0 : 90)}
+                      className={`px-2 py-0.5 rounded-md font-bold transition ${
+                        minTrustFilter === 90 ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      }`}
+                    >
+                      {minTrustFilter === 90 ? '90%+ Verified' : 'All'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Case 1: Active query entered -> Show matching article suggestions */}
+                {searchQuery.trim() ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 font-bold">
+                      <span>MATCHING DISPATCHES ({searchSuggestions.length})</span>
+                      <span>Press Enter for full feed search</span>
+                    </div>
+
+                    {searchSuggestions.length === 0 ? (
+                      <p className="py-4 text-center text-slate-500 text-xs">
+                        No articles match "{searchQuery}". Try searching for categories like "AI", "Business", or "Africa".
+                      </p>
+                    ) : (
+                      <div className="space-y-1.5">
+                        {searchSuggestions.map((art) => (
+                          <div
+                            key={art.id}
+                            onClick={() => {
+                              if (onSelectArticle) onSelectArticle(art);
+                              handleSelectSearchQuery(art.title);
+                            }}
+                            className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 hover:bg-blue-50 dark:hover:bg-blue-950/60 border border-slate-100 dark:border-slate-800 transition cursor-pointer flex items-start gap-3"
+                          >
+                            <img
+                              src={art.featuredImage}
+                              alt={art.title}
+                              className="w-12 h-12 rounded-lg object-cover shrink-0"
+                            />
+                            <div className="flex-1 min-w-0 space-y-0.5">
+                              <div className="flex items-center justify-between text-[10px]">
+                                <span className="font-bold text-blue-600 dark:text-blue-400">{art.category}</span>
+                                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{art.confidenceScore}% Trust</span>
+                              </div>
+                              <h4 className="font-bold text-slate-900 dark:text-slate-100 text-xs line-clamp-1 leading-snug">
+                                {art.title}
+                              </h4>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
+                                {art.summaryShort}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Case 2: No query typed -> Show Recent Searches & Trending Topics */
+                  <div className="space-y-4">
+                    {/* Recent Searches */}
+                    {recentSearches.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 font-bold">
+                          <span className="flex items-center gap-1">
+                            <History className="w-3.5 h-3.5" /> RECENT SEARCHES
+                          </span>
+                          <button
+                            onClick={handleClearHistory}
+                            className="text-slate-400 hover:text-rose-500 transition text-[10px]"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {recentSearches.map((term, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handleSelectSearchQuery(term)}
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              <span>{term}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Trending Search Topics */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div className="text-[11px] text-slate-500 font-bold flex items-center gap-1">
+                        <TrendingUp className="w-3.5 h-3.5 text-amber-500" /> TRENDING TOPICS
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {TRENDING_SEARCH_TOPICS.map((topic, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSelectSearchQuery(topic.replace(/^[^\s]+\s*/, ''))}
+                            className="px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/80 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800 transition cursor-pointer flex items-center gap-1"
+                          >
+                            <span>{topic}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Action Buttons */}
-        <div className="flex items-center space-x-1.5">
-          {/* WhatsApp Channel Direct Link */}
-          <WhatsAppIntegration variant="button" location="header" className="hidden md:inline-flex" />
-
-          {/* Veritas Knowledge Library */}
-          {onOpenKnowledgeLibrary && (
+        <div className="flex items-center gap-1.5 flex-wrap justify-end relative">
+          {/* VCIO (The Brain) Button */}
+          {onOpenVcioBrain && (
             <button
-              onClick={onOpenKnowledgeLibrary}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1.5 font-bold text-xs"
-              title="Veritas Evergreen Knowledge Library & Research Archive"
+              onClick={onOpenVcioBrain}
+              className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-indigo-600/20 to-purple-600/20 hover:from-amber-500/30 hover:to-purple-600/30 text-amber-300 border border-amber-500/40 transition-all flex items-center gap-1.5 font-extrabold text-xs shadow-sm cursor-pointer"
+              title="VCIO (Veritas Chief Intelligence Officer) — The Brain of Veritas"
             >
-              <BookOpen className="w-4 h-4 text-cyan-500" />
-              <span className="hidden xl:inline">Knowledge Library</span>
-            </button>
-          )}
-          {/* Pan-African Trade & Risk Hub */}
-          {onOpenAfricaCenter && (
-            <button
-              onClick={onOpenAfricaCenter}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-950/50 hover:text-amber-600 dark:hover:text-amber-400 transition-colors hidden sm:block"
-              title="Pan-African Intelligence & Trade Observatory"
-            >
-              <Compass className="w-4 h-4 text-amber-500" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>VCIO (Brain)</span>
             </button>
           )}
 
-          {/* Senior Analyst HITL Review */}
-          {onOpenAnalystReview && (
+          {/* VCIA (Investigative Analyst) Button */}
+          {onOpenVciaInvestigative && (
             <button
-              onClick={onOpenAnalystReview}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hidden sm:block"
-              title="Human-in-the-Loop Analyst Audit Cockpit"
+              onClick={onOpenVciaInvestigative}
+              className="px-2.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 transition-all flex items-center gap-1.5 font-bold text-xs cursor-pointer"
+              title="VCIA (Veritas Chief Investigative Analyst) — Long-Term Research Co-Pilot"
             >
-              <UserCheck className="w-4 h-4 text-blue-500" />
+              <Search className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="hidden sm:inline">VCIA</span>
             </button>
           )}
-
-          {/* Enterprise Workspace */}
-          {onOpenEnterpriseWorkspace && (
-            <button
-              onClick={onOpenEnterpriseWorkspace}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors hidden md:block"
-              title="Enterprise Workspaces & Licensing"
-            >
-              <Building2 className="w-4 h-4 text-emerald-500" />
-            </button>
-          )}
-
-          {/* AI Trust & Transparency Center */}
-          {onOpenTransparencyCenter && (
-            <button
-              onClick={onOpenTransparencyCenter}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-950/50 hover:text-teal-600 dark:hover:text-teal-400 transition-colors hidden md:block"
-              title="AI Transparency & Public Trust Center"
-            >
-              <Info className="w-4 h-4 text-teal-500" />
-            </button>
-          )}
-
-          {/* Global Risk Index & Supply Chain */}
-          {onOpenGlobalRiskIndex && (
-            <button
-              onClick={onOpenGlobalRiskIndex}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-950/50 hover:text-rose-600 dark:hover:text-rose-400 transition-colors hidden md:block"
-              title="Veritas Global Risk Index & Supply Chain Observatory"
-            >
-              <Activity className="w-4 h-4 text-rose-500" />
-            </button>
-          )}
-
-          {/* Sovereign & Company Dossiers */}
-          {onOpenCompanyGovProfiles && (
-            <button
-              onClick={onOpenCompanyGovProfiles}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hidden md:block"
-              title="Enterprise & Sovereign State Dossiers"
-            >
-              <Landmark className="w-4 h-4 text-indigo-500" />
-            </button>
-          )}
-
-          {/* Intelligence Operations Center */}
-          {onOpenIntelligenceOps && (
-            <button
-              onClick={onOpenIntelligenceOps}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-950/50 hover:text-amber-600 dark:hover:text-amber-400 transition-colors hidden md:block"
-              title="Veritas Intelligence Operations Center (Command Center & Decision Engine)"
-            >
-              <Compass className="w-4 h-4 text-amber-500" />
-            </button>
-          )}
-
-          {/* Global Digital Twin & Simulation Suite */}
-          {onOpenDigitalTwin && (
-            <button
-              onClick={onOpenDigitalTwin}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors hidden md:block"
-              title="Real-Time Global Digital Twin & Advanced Shock Simulator"
-            >
-              <Globe className="w-4 h-4 text-cyan-500 animate-spin-slow" />
-            </button>
-          )}
-
-          {/* Veritas OS Core & Trust Framework */}
-          {onOpenOsCore && (
-            <button
-              onClick={onOpenOsCore}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors hidden md:block"
-              title="Veritas Intelligence Operating System (OS Core, Red Team, Trust Framework)"
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            </button>
-          )}
-
-          {/* Institutional Intelligence Terminal */}
-          {onOpenTerminal && (
-            <button
-              onClick={onOpenTerminal}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hidden md:block"
-              title="Veritas Institutional Intelligence Terminal & Global Trust Network"
-            >
-              <Terminal className="w-4 h-4 text-indigo-500 animate-pulse" />
-            </button>
-          )}
-
-          {/* VIXP Intelligence Exchange Protocol */}
-          {onOpenExchange && (
-            <button
-              onClick={onOpenExchange}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors hidden md:block"
-              title="Veritas Intelligence Exchange Protocol (VIXP v12.0) & Dependency Graph 2.0"
-            >
-              <Network className="w-4 h-4 text-cyan-500 animate-pulse" />
-            </button>
-          )}
-
-          {/* Emergency Crisis Radar */}
-          <button
-            onClick={onOpenCrisisMonitor}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-950/50 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
-            title="Live Emergency Crisis Radar"
-          >
-            <ShieldAlert className="w-4 h-4 text-rose-500 animate-pulse" />
-          </button>
-
-          {/* Deep AI Research Workspace */}
-          <button
-            onClick={onOpenResearchWorkspace}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hidden sm:block"
-            title="AI Deep Research Workspace"
-          >
-            <Sparkles className="w-4 h-4 text-indigo-500" />
-          </button>
-
-          {/* AI Agent Network */}
-          <button
-            onClick={onOpenAgentNetwork}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-950/50 hover:text-purple-600 dark:hover:text-purple-400 transition-colors hidden sm:block"
-            title="Specialized AI News Agent Network"
-          >
-            <Bot className="w-4 h-4 text-purple-500" />
-          </button>
-
-          {/* Live Geospatial Map */}
-          <button
-            onClick={onOpenNewsMap}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:block"
-            title="Live Geospatial News Map"
-          >
-            <Globe className="w-4 h-4 text-emerald-500" />
-          </button>
-
-          {/* AI Knowledge Graph */}
-          <button
-            onClick={onOpenKnowledgeGraph}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:block"
-            title="AI Knowledge Graph & Entity Intelligence"
-          >
-            <Network className="w-4 h-4 text-indigo-500" />
-          </button>
-
-          {/* Audio & Video Podcast Hub */}
-          <button
-            onClick={onOpenAudioVideo}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:block"
-            title="AI Audio Podcasts & Video Intelligence"
-          >
-            <Radio className="w-4 h-4 text-purple-500" />
-          </button>
-
-          {/* Public API Dev Portal */}
-          <button
-            onClick={onOpenDevApi}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden md:block"
-            title="Public News REST API Portal"
-          >
-            <Code className="w-4 h-4 text-teal-500" />
-          </button>
 
           {/* AI Search Assistant Button */}
           {onOpenAiSearch && (
             <button
               onClick={onOpenAiSearch}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer"
               title="Veritas AI Conversational Search Assistant"
             >
               <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-              <span className="hidden lg:inline">AI SEARCH</span>
+              <span className="hidden lg:inline">AI Search</span>
             </button>
           )}
 
@@ -496,27 +570,37 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenCommandCenter && (
             <button
               onClick={onOpenCommandCenter}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
               title="Veritas AI Command Center Dashboard"
             >
               <Cpu className="w-3.5 h-3.5 text-cyan-200 animate-pulse" />
-              <span className="hidden md:inline">COMMAND CENTER</span>
+              <span className="hidden md:inline">Command Center</span>
             </button>
           )}
 
-          {/* AI Assistant Button */}
+          {/* AI Research Button */}
           <button
             onClick={onOpenAiAssistant}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm shadow-blue-500/20 transition-all cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm shadow-blue-500/20 transition-all cursor-pointer"
+            title="Veritas AI Research Co-Pilot"
           >
-            <Cpu className="w-4 h-4" />
-            <span className="hidden md:inline">AI RESEARCH</span>
+            <Cpu className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Research</span>
+          </button>
+
+          {/* Emergency Crisis Radar */}
+          <button
+            onClick={onOpenCrisisMonitor}
+            className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-950/50 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+            title="Live Emergency Crisis Radar"
+          >
+            <ShieldAlert className="w-4 h-4 text-rose-500 animate-pulse" />
           </button>
 
           {/* Bookmarks */}
           <button
             onClick={onOpenBookmarks}
-            className="relative p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title="Bookmarks & Reading List"
           >
             <Bookmark className="w-4 h-4" />
@@ -527,24 +611,369 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Publisher Directory Button */}
-          <button
-            onClick={onOpenPublisherDirectory}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:block"
-            title="Trusted Publisher Directory"
-          >
-            <ShieldCheck className="w-4 h-4" />
-          </button>
-
           {/* Admin Dashboard / Console Panel Link */}
           <button
             onClick={onOpenAdmin}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-amber-400 hover:bg-slate-800 dark:bg-slate-800 dark:text-amber-300 dark:hover:bg-slate-700 border border-amber-500/30 transition-all cursor-pointer shadow-xs"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-amber-400 hover:bg-slate-800 dark:bg-slate-800 dark:text-amber-300 dark:hover:bg-slate-700 border border-amber-500/30 transition-all cursor-pointer shadow-xs"
             title="System Admin & Crawler Control Console"
           >
             <Settings className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Admin Panel</span>
+            <span className="hidden sm:inline">Admin</span>
           </button>
+
+          {/* MORE TOOLS (25+) DROPDOWN TRIGGER */}
+          <button
+            onClick={() => setShowToolsMenu(!showToolsMenu)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer shadow-sm ${
+              showToolsMenu
+                ? 'bg-amber-500 text-slate-950 border-amber-400'
+                : 'bg-slate-900 text-cyan-400 border-cyan-500/40 hover:bg-slate-800 hover:text-cyan-300'
+            }`}
+            title="Access all 25+ Veritas Intelligence Engines & Suites"
+          >
+            <Grid className="w-4 h-4" />
+            <span>25+ Tools</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showToolsMenu ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* TOOLS DROPDOWN POPOVER PANEL */}
+          {showToolsMenu && (
+            <>
+              {/* Overlay Backdrop to close */}
+              <div
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs"
+                onClick={() => setShowToolsMenu(false)}
+              />
+
+              <div className="absolute right-0 top-full mt-2 w-[94vw] max-w-[720px] max-h-[85vh] overflow-y-auto bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl p-5 text-slate-100 z-50 font-sans">
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+                  <div className="flex items-center space-x-2">
+                    <div className="p-1.5 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-lg text-slate-950">
+                      <Grid className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-sm text-white">Veritas Intelligence Suite</h3>
+                      <p className="text-[11px] text-slate-400">All specialized AI verification engines & governance modules</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowToolsMenu(false)}
+                    className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+                  {/* Category 1: Executive & Governance */}
+                  <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1">
+                      <UserCheck className="w-3.5 h-3.5" />
+                      <span>Executive & Governance</span>
+                    </div>
+                    <div className="space-y-1">
+                      {onOpenExecutiveDashboard && (
+                        <button
+                          onClick={() => { onOpenExecutiveDashboard(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-amber-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <UserCheck className="w-4 h-4 text-purple-400" />
+                            <span className="font-medium">Executive Intelligence Suite</span>
+                          </div>
+                          <span className="text-[10px] text-slate-500 font-mono">Phase 10</span>
+                        </button>
+                      )}
+                      {onOpenCountryProfiles && (
+                        <button
+                          onClick={() => { onOpenCountryProfiles(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-blue-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Globe className="w-4 h-4 text-blue-400" />
+                            <span className="font-medium">Country Intelligence Profiles</span>
+                          </div>
+                          <span className="text-[10px] text-slate-500 font-mono">Phase 9</span>
+                        </button>
+                      )}
+                      {onOpenCompanyGovProfiles && (
+                        <button
+                          onClick={() => { onOpenCompanyGovProfiles(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-indigo-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Landmark className="w-4 h-4 text-indigo-400" />
+                            <span className="font-medium">Sovereign State & Company Dossiers</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenEnterpriseWorkspace && (
+                        <button
+                          onClick={() => { onOpenEnterpriseWorkspace(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-emerald-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Building2 className="w-4 h-4 text-emerald-400" />
+                            <span className="font-medium">Enterprise Workspaces</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenRoadmap2035 && (
+                        <button
+                          onClick={() => { onOpenRoadmap2035(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-amber-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Rocket className="w-4 h-4 text-amber-400" />
+                            <span className="font-medium">Veritas 2035 Strategic Vision</span>
+                          </div>
+                          <span className="text-[10px] text-slate-500 font-mono">Phase 15</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Category 2: Operations & Systems */}
+                  <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <div className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider flex items-center space-x-1">
+                      <Cpu className="w-3.5 h-3.5" />
+                      <span>Operations & Intelligence OS</span>
+                    </div>
+                    <div className="space-y-1">
+                      {onOpenIntelligenceOps && (
+                        <button
+                          onClick={() => { onOpenIntelligenceOps(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-cyan-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Compass className="w-4 h-4 text-amber-400" />
+                            <span className="font-medium">Intelligence Operations Center</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenDigitalTwin && (
+                        <button
+                          onClick={() => { onOpenDigitalTwin(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-cyan-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Globe className="w-4 h-4 text-cyan-400" />
+                            <span className="font-medium">Global Digital Twin Simulator</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenOsCore && (
+                        <button
+                          onClick={() => { onOpenOsCore(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-emerald-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                            <span className="font-medium">Veritas OS Core & Red Team</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenTerminal && (
+                        <button
+                          onClick={() => { onOpenTerminal(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-indigo-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Terminal className="w-4 h-4 text-indigo-400" />
+                            <span className="font-medium">Institutional Terminal</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenExchange && (
+                        <button
+                          onClick={() => { onOpenExchange(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-cyan-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Network className="w-4 h-4 text-cyan-400" />
+                            <span className="font-medium">VIXP Exchange Protocol</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenSecurityArchitecture && (
+                        <button
+                          onClick={() => { onOpenSecurityArchitecture(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-rose-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Shield className="w-4 h-4 text-rose-400" />
+                            <span className="font-medium">Enterprise Security Architecture</span>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Category 3: Analytics & Knowledge Engines */}
+                  <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <div className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider flex items-center space-x-1">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>Analytics & Knowledge</span>
+                    </div>
+                    <div className="space-y-1">
+                      {onOpenNarrativeEngine && (
+                        <button
+                          onClick={() => { onOpenNarrativeEngine(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-indigo-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Compass className="w-4 h-4 text-indigo-400" />
+                            <span className="font-medium">Narrative Intelligence Engine</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenKnowledgeLibrary && (
+                        <button
+                          onClick={() => { onOpenKnowledgeLibrary(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-cyan-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <BookOpen className="w-4 h-4 text-cyan-400" />
+                            <span className="font-medium">Veritas Knowledge Library</span>
+                          </div>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => { onOpenKnowledgeGraph(); setShowToolsMenu(false); }}
+                        className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-indigo-300 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Network className="w-4 h-4 text-indigo-400" />
+                          <span className="font-medium">AI Knowledge Graph</span>
+                        </div>
+                      </button>
+                      {onOpenAfricaCenter && (
+                        <button
+                          onClick={() => { onOpenAfricaCenter(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-amber-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Compass className="w-4 h-4 text-amber-400" />
+                            <span className="font-medium">Pan-African Trade & Risk Hub</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenAnalystReview && (
+                        <button
+                          onClick={() => { onOpenAnalystReview(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-blue-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <UserCheck className="w-4 h-4 text-blue-400" />
+                            <span className="font-medium">Senior Analyst HITL Review</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenPromptFramework && (
+                        <button
+                          onClick={() => { onOpenPromptFramework(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-indigo-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Terminal className="w-4 h-4 text-indigo-400" />
+                            <span className="font-medium">Prompt Engineering Framework</span>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Category 4: Data Streams, Media & Trust */}
+                  <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1">
+                      <Radio className="w-3.5 h-3.5" />
+                      <span>Data Streams & Media</span>
+                    </div>
+                    <div className="space-y-1">
+                      {onOpenUniversalCollection && (
+                        <button
+                          onClick={() => { onOpenUniversalCollection(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-cyan-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Radio className="w-4 h-4 text-cyan-400" />
+                            <span className="font-medium">Universal Collection Engine</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenTransparencyCenter && (
+                        <button
+                          onClick={() => { onOpenTransparencyCenter(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-teal-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Info className="w-4 h-4 text-teal-400" />
+                            <span className="font-medium">AI Trust & Transparency</span>
+                          </div>
+                        </button>
+                      )}
+                      {onOpenGlobalRiskIndex && (
+                        <button
+                          onClick={() => { onOpenGlobalRiskIndex(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-rose-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Activity className="w-4 h-4 text-rose-400" />
+                            <span className="font-medium">Global Risk Index</span>
+                          </div>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => { onOpenAgentNetwork(); setShowToolsMenu(false); }}
+                        className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-purple-300 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Bot className="w-4 h-4 text-purple-400" />
+                          <span className="font-medium">Specialized AI Agent Network</span>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => { onOpenNewsMap(); setShowToolsMenu(false); }}
+                        className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-emerald-300 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Globe className="w-4 h-4 text-emerald-400" />
+                          <span className="font-medium">Live Geospatial News Map</span>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => { onOpenAudioVideo(); setShowToolsMenu(false); }}
+                        className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-purple-300 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Radio className="w-4 h-4 text-purple-400" />
+                          <span className="font-medium">AI Audio Podcasts & Video</span>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => { onOpenDevApi(); setShowToolsMenu(false); }}
+                        className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-teal-300 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Code className="w-4 h-4 text-teal-400" />
+                          <span className="font-medium">Public News REST API Portal</span>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => { onOpenPublisherDirectory(); setShowToolsMenu(false); }}
+                        className="w-full text-left p-2 rounded-lg hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-slate-100 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <ShieldCheck className="w-4 h-4 text-blue-400" />
+                          <span className="font-medium">Trusted Publisher Directory</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>

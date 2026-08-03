@@ -9,7 +9,7 @@ import {
   Globe, Clock, Eye, MessageSquare, ThumbsUp, Layers, CheckCircle, 
   AlertTriangle, HelpCircle, BarChart3, ChevronDown, ChevronUp, Sparkles, Send,
   BookOpen, Monitor, ExternalLink, RefreshCw, FileText, Check, Copy, Camera,
-  Cpu, Zap, Shield, ArrowRight, FileCheck, Sliders
+  Cpu, Zap, Shield, ArrowRight, FileCheck, Sliders, Printer, Download
 } from 'lucide-react';
 
 interface ArticleDetailModalProps {
@@ -234,6 +234,139 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
     return article.summaryMedium;
   };
 
+  // Export / Print to PDF State & Handlers
+  const [showExportMenu, setShowExportMenu] = useState(false);
+
+  const handlePrintToPdf = () => {
+    setShowExportMenu(false);
+    window.print();
+  };
+
+  const handleDownloadReportHtml = () => {
+    setShowExportMenu(false);
+    const reportHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Veritas Intelligence Report - ${article.title.replace(/"/g, '&quot;')}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 40px; color: #0f172a; line-height: 1.6; background-color: #ffffff; }
+    .header { border-bottom: 3px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 20px; font-weight: 900; color: #1e40af; font-family: monospace; letter-spacing: -0.02em; }
+    .subbrand { font-size: 11px; color: #64748b; font-family: monospace; }
+    .report-meta { text-align: right; font-size: 11px; color: #64748b; font-family: monospace; }
+    .title { font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 16px; margin-bottom: 16px; font-family: Georgia, serif; line-height: 1.3; }
+    .badges { margin-bottom: 20px; }
+    .badge { display: inline-block; padding: 4px 10px; margin-right: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; font-family: monospace; }
+    .badge-primary { background-color: #dbeafe; color: #1e40af; }
+    .badge-success { background-color: #d1fae5; color: #065f46; }
+    .badge-amber { background-color: #fef3c7; color: #92400e; }
+    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 12px; font-family: monospace; margin-bottom: 24px; }
+    .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e40af; margin-top: 24px; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; font-family: monospace; }
+    .content-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 14px; margin-top: 12px; }
+    .takeaways-list { margin-top: 12px; padding-left: 20px; font-size: 13px; }
+    .takeaways-list li { margin-bottom: 8px; }
+    .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b; text-align: center; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="brand">VERITAS INTELLIGENCE PLATFORM</div>
+      <div class="subbrand">OFFICIAL VALIDATED NEWS DISPATCH REPORT • CONFIDENTIAL</div>
+    </div>
+    <div class="report-meta">
+      <div>REPORT ID: VER-${article.id.substring(0, 8).toUpperCase()}</div>
+      <div>GENERATED: ${new Date().toLocaleString()}</div>
+      <div>CLASSIFICATION: RESTRICTED ANALYST BRIEF</div>
+    </div>
+  </div>
+
+  <div class="badges">
+    <span class="badge badge-primary">PUBLISHER: ${article.mainPublisher.name}</span>
+    <span class="badge badge-success">VERITAS CONFIDENCE: ${article.confidenceScore}/100</span>
+    <span class="badge badge-amber">RISK HORIZON: ${(article.riskLevel || 'LOW').toUpperCase()}</span>
+  </div>
+
+  <h1 class="title">${article.title}</h1>
+
+  <div class="meta-grid">
+    <div><strong>Author:</strong> ${article.author}</div>
+    <div><strong>Category:</strong> ${article.category}</div>
+    <div><strong>Region:</strong> ${article.region} (${article.country})</div>
+    <div><strong>Published:</strong> ${new Date(article.publishedAt).toLocaleString()}</div>
+    <div><strong>Trust Rating:</strong> ${article.mainPublisher.trustScore}%</div>
+    <div><strong>Fact Check:</strong> ${article.factCheckBadge}</div>
+  </div>
+
+  <div class="section-title">EXECUTIVE INTELLIGENCE SUMMARY</div>
+  <div class="content-box">
+    ${article.summaryDetailed || article.summaryMedium || article.summaryShort}
+  </div>
+
+  ${article.keyTakeaways && article.keyTakeaways.length > 0 ? `
+  <div class="section-title">KEY ANALYTICAL FINDINGS & PERSPECTIVES</div>
+  <ul class="takeaways-list">
+    ${article.keyTakeaways.map(t => `<li>${t}</li>`).join('')}
+  </ul>
+  ` : ''}
+
+  <div class="footer">
+    CONFIDENTIAL INTELLIGENCE DISPATCH • PREPARED FOR ANALYST OFFLINE USE • VERITAS AI AGENT NETWORK
+  </div>
+</body>
+</html>`;
+
+    const blob = new Blob([reportHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `veritas_intelligence_report_${article.id.substring(0, 8)}_${Date.now()}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadTextBrief = () => {
+    setShowExportMenu(false);
+    const textBrief = `================================================================================
+VERITAS INTELLIGENCE PLATFORM - VALIDATED NEWS REPORT
+================================================================================
+REPORT ID: VER-${article.id.substring(0, 8).toUpperCase()}
+GENERATED: ${new Date().toLocaleString()}
+CLASSIFICATION: RESTRICTED ANALYST BRIEF
+
+TITLE: ${article.title}
+PUBLISHER: ${article.mainPublisher.name} (Trust Rating: ${article.mainPublisher.trustScore}%)
+CATEGORY: ${article.category} | REGION: ${article.region} (${article.country})
+PUBLISHED AT: ${new Date(article.publishedAt).toLocaleString()}
+AUTHOR: ${article.author}
+CONFIDENCE SCORE: ${article.confidenceScore}/100
+FACT-CHECK STATUS: ${article.factCheckBadge}
+RISK LEVEL: ${(article.riskLevel || 'LOW').toUpperCase()}
+
+--------------------------------------------------------------------------------
+EXECUTIVE INTELLIGENCE SUMMARY
+--------------------------------------------------------------------------------
+${article.summaryDetailed || article.summaryMedium || article.summaryShort}
+
+--------------------------------------------------------------------------------
+KEY TAKEAWAYS
+--------------------------------------------------------------------------------
+${(article.keyTakeaways || [article.summaryShort]).map((t, i) => `${i + 1}. ${t}`).join('\n')}
+
+================================================================================
+VERITAS AGENT NETWORK - CONFIDENTIAL INTELLIGENCE DISPATCH
+================================================================================`;
+
+    const blob = new Blob([textBrief], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `veritas_brief_${article.id.substring(0, 8)}_${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
       <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full max-h-[94vh] overflow-y-auto border border-slate-200 dark:border-slate-800 shadow-2xl relative flex flex-col">
@@ -283,6 +416,56 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Export Report / Print PDF Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all flex items-center gap-1.5 text-xs shadow-xs cursor-pointer"
+                title="Export or Print Intelligence Report"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Export Report</span>
+                <ChevronDown className="w-3 h-3 text-indigo-200" />
+              </button>
+
+              {showExportMenu && (
+                <div className="absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-1.5 z-50 font-sans text-xs space-y-1 animate-fade-in">
+                  <button
+                    onClick={handlePrintToPdf}
+                    className="w-full px-3 py-2 text-left rounded-xl hover:bg-indigo-950 text-slate-100 hover:text-indigo-300 font-medium flex items-center gap-2 cursor-pointer transition"
+                  >
+                    <Printer className="w-4 h-4 text-amber-400" />
+                    <div>
+                      <div className="font-bold">Print to PDF</div>
+                      <div className="text-[10px] text-slate-400">Save formatted browser PDF</div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleDownloadReportHtml}
+                    className="w-full px-3 py-2 text-left rounded-xl hover:bg-indigo-950 text-slate-100 hover:text-indigo-300 font-medium flex items-center gap-2 cursor-pointer transition"
+                  >
+                    <Download className="w-4 h-4 text-emerald-400" />
+                    <div>
+                      <div className="font-bold">Download Offline HTML</div>
+                      <div className="text-[10px] text-slate-400">Full styled offline report</div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleDownloadTextBrief}
+                    className="w-full px-3 py-2 text-left rounded-xl hover:bg-indigo-950 text-slate-100 hover:text-indigo-300 font-medium flex items-center gap-2 cursor-pointer transition"
+                  >
+                    <FileText className="w-4 h-4 text-cyan-400" />
+                    <div>
+                      <div className="font-bold">Download Text Brief</div>
+                      <div className="text-[10px] text-slate-400">Markdown for paste/briefings</div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={handleCopyLink}
               className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors flex items-center gap-1 text-xs font-medium"
@@ -1076,22 +1259,118 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
               </div>
             )}
 
-            {/* Direct CTA - Stay In-Site Reader */}
+            {/* Direct CTA - Stay In-Site Reader & Offline Export */}
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-xs text-slate-500 dark:text-slate-400">
                 Veritas AI respects copyright. We provide original verified reporting and credit {article.mainPublisher.name}.
               </div>
 
-              <button
-                onClick={() => setViewMode('reader')}
-                className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-black text-white dark:bg-blue-600 dark:hover:bg-blue-700 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Read Full Story In-Site ({article.mainPublisher.name})</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handlePrintToPdf}
+                  className="w-full sm:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                >
+                  <Printer className="w-4 h-4 text-amber-300" />
+                  <span>Export Report (PDF / Print)</span>
+                </button>
+
+                <button
+                  onClick={() => setViewMode('reader')}
+                  className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-black text-white dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Read Full Story In-Site ({article.mainPublisher.name})</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
+      </div>
+
+      {/* PRINT-ONLY EXECUTIVE INTELLIGENCE REPORT CONTAINER */}
+      <div id="printable-intelligence-report" className="hidden print:block font-serif text-slate-950 p-8 bg-white space-y-6">
+        <style>{`
+          @media print {
+            body * {
+              visibility: hidden !important;
+            }
+            #printable-intelligence-report, #printable-intelligence-report * {
+              visibility: visible !important;
+            }
+            #printable-intelligence-report {
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 100% !important;
+              display: block !important;
+              background: white !important;
+              color: black !important;
+              padding: 24px !important;
+            }
+          }
+        `}</style>
+
+        {/* Print Letterhead */}
+        <div className="border-b-2 border-blue-600 pb-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-black text-blue-900 font-mono tracking-tight">VERITAS INTELLIGENCE PLATFORM</h1>
+            <p className="text-xs text-slate-600 font-mono">VALIDATED NEWS INTELLIGENCE DISPATCH REPORT • CONFIDENTIAL</p>
+          </div>
+          <div className="text-right text-xs font-mono text-slate-600">
+            <div>REPORT ID: VER-{article.id.substring(0, 8).toUpperCase()}</div>
+            <div>DATE: {new Date().toLocaleDateString()}</div>
+            <div>CLASSIFICATION: RESTRICTED ANALYST BRIEF</div>
+          </div>
+        </div>
+
+        {/* Metadata & Trust Badges */}
+        <div className="space-y-3">
+          <div className="flex gap-2 text-xs font-mono font-bold">
+            <span className="px-2.5 py-1 bg-blue-100 text-blue-900 rounded border border-blue-200">PUBLISHER: {article.mainPublisher.name}</span>
+            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 rounded border border-emerald-200">VERITAS SCORE: {article.confidenceScore}/100</span>
+            <span className="px-2.5 py-1 bg-amber-100 text-amber-900 rounded border border-amber-200">RISK: {(article.riskLevel || 'LOW').toUpperCase()}</span>
+          </div>
+
+          <h2 className="text-2xl font-bold text-slate-900 leading-snug">{article.title}</h2>
+
+          <div className="grid grid-cols-3 gap-2 bg-slate-100 p-3 rounded-lg text-xs font-mono border border-slate-200">
+            <div><strong>Author:</strong> {article.author}</div>
+            <div><strong>Category:</strong> {article.category}</div>
+            <div><strong>Region:</strong> {article.region} ({article.country})</div>
+            <div><strong>Published:</strong> {new Date(article.publishedAt).toLocaleString()}</div>
+            <div><strong>Trust Rating:</strong> {article.mainPublisher.trustScore}%</div>
+            <div><strong>Fact Check:</strong> {article.factCheckBadge}</div>
+          </div>
+        </div>
+
+        {/* Executive Summary */}
+        <div className="space-y-2">
+          <h3 className="text-xs font-bold font-mono text-blue-800 uppercase tracking-wider border-b border-slate-300 pb-1">
+            Executive Intelligence Summary
+          </h3>
+          <p className="text-sm text-slate-800 leading-relaxed font-sans whitespace-pre-line">
+            {article.summaryDetailed || article.summaryMedium || article.summaryShort}
+          </p>
+        </div>
+
+        {/* Key Analytical Takeaways */}
+        {article.keyTakeaways && article.keyTakeaways.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-xs font-bold font-mono text-blue-800 uppercase tracking-wider border-b border-slate-300 pb-1">
+              Key Analytical Takeaways & Perspectives
+            </h3>
+            <ul className="list-disc pl-5 text-xs text-slate-800 space-y-1 font-sans">
+              {article.keyTakeaways.map((takeaway, idx) => (
+                <li key={idx}>{takeaway}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="border-t border-slate-200 pt-4 text-center text-[10px] font-mono text-slate-500">
+          THIS REPORT WAS GENERATED FOR ANALYST OFFLINE USE BY THE VERITAS ENTERPRISE INTELLIGENCE AGENT SYSTEM.
+        </div>
       </div>
     </div>
   );

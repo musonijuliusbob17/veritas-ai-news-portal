@@ -7,10 +7,17 @@ import { EditorialAssistantService, EditorialPackage } from '../services/Editori
 import { AudienceIntelligenceService, VisitorProfile } from '../services/AudienceIntelligenceService';
 import { AiSearchService, AiSearchResult } from '../services/AiSearchService';
 import { KnowledgeGraphEngine, KnowledgeGraphData } from '../services/KnowledgeGraphEngine';
+import { GlobalDataIngestionEngine, IngestedItem } from '../services/GlobalDataIngestionEngine';
+import { EventDetectionEngine } from '../services/EventDetectionEngine';
+import { BreakingNewsEngine } from '../services/BreakingNewsEngine';
+import { PredictionEngine, ForecastItem } from '../services/PredictionEngine';
+import { TimelineEngine } from '../services/TimelineEngine';
+import { AgentOrchestrator, AgentStatus } from '../services/AgentOrchestrator';
+import { GlobalIntelligenceMap } from './GlobalIntelligenceMap';
 import { 
   X, Cpu, Radio, TrendingUp, Users, ShieldCheck, Sparkles, 
   Search, BookOpen, Share2, MessageCircle, BarChart3, ChevronRight, 
-  Layers, CheckCircle2, AlertTriangle, RefreshCw, Eye, Flame, Award, Globe, Zap
+  Layers, CheckCircle2, AlertTriangle, RefreshCw, Eye, Flame, Award, Globe, Zap, Network, Activity, Calendar, Bot
 } from 'lucide-react';
 
 interface VeritasIntelligenceCommandCenterModalProps {
@@ -26,7 +33,7 @@ export const VeritasIntelligenceCommandCenterModal: React.FC<VeritasIntelligence
   articles,
   onSelectArticle
 }) => {
-  const [activeTab, setActiveTab] = useState<'world' | 'audience' | 'content' | 'editorial' | 'search'>('world');
+  const [activeTab, setActiveTab] = useState<'world' | 'map' | 'pipeline' | 'forecast' | 'agents' | 'audience' | 'content' | 'editorial' | 'search'>('world');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(articles[0] || null);
   const [intelProfile, setIntelProfile] = useState<ArticleIntelligenceProfile | null>(null);
   const [trustEval, setTrustEval] = useState<TrustScoreEvaluation | null>(null);
@@ -34,6 +41,11 @@ export const VeritasIntelligenceCommandCenterModal: React.FC<VeritasIntelligence
   const [visitorProfile, setVisitorProfile] = useState<VisitorProfile | null>(null);
   const [editorialPkg, setEditorialPkg] = useState<EditorialPackage | null>(null);
   const [graphData, setGraphData] = useState<KnowledgeGraphData | null>(null);
+
+  // Phase 4 Ingestion & Forecast Data
+  const [ingestedItems, setIngestedItems] = useState<IngestedItem[]>([]);
+  const [forecasts, setForecasts] = useState<ForecastItem[]>([]);
+  const [agents, setAgents] = useState<AgentStatus[]>([]);
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('Latest AI investments in Rwanda');
@@ -45,6 +57,9 @@ export const VeritasIntelligenceCommandCenterModal: React.FC<VeritasIntelligence
       setTrends(TrendDetectionService.detectTrends(articles));
       setVisitorProfile(AudienceIntelligenceService.getVisitorProfile());
       setGraphData(KnowledgeGraphEngine.buildGraph(articles));
+      setIngestedItems(GlobalDataIngestionEngine.getIngestedItems());
+      setForecasts(PredictionEngine.generateForecasts(articles));
+      setAgents(AgentOrchestrator.getAgentStates());
 
       if (selectedArticle) {
         setIntelProfile(NewsIntelligenceEngine.analyzeArticle(selectedArticle));
@@ -89,11 +104,11 @@ export const VeritasIntelligenceCommandCenterModal: React.FC<VeritasIntelligence
                 </h2>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-[10px] font-mono font-bold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  PHASE 3 CORE ONLINE
+                  PHASE 4 REAL-TIME NETWORK ONLINE
                 </span>
               </div>
               <p className="text-xs text-slate-400 font-mono">
-                Autonomous Global News Intelligence, Verification & Knowledge Graph System
+                Continuous Global Data Collection, Verification, Event Detection & Predictive AI Network
               </p>
             </div>
           </div>
@@ -112,10 +127,13 @@ export const VeritasIntelligenceCommandCenterModal: React.FC<VeritasIntelligence
         <div className="bg-slate-950/60 border-b border-slate-800 px-5 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
           {[
             { id: 'world', label: '1. Live World Monitor', icon: Radio },
-            { id: 'audience', label: '2. Audience Intelligence', icon: Users },
-            { id: 'content', label: '3. Content & Trust Core', icon: ShieldCheck },
-            { id: 'editorial', label: '4. Editorial AI Assistant', icon: Sparkles },
-            { id: 'search', label: '5. Veritas AI Search', icon: Search }
+            { id: 'map', label: '2. Global Intelligence Map', icon: Globe },
+            { id: 'pipeline', label: '3. Ingestion Pipeline', icon: Network },
+            { id: 'forecast', label: '4. AI Trend Forecasts', icon: TrendingUp },
+            { id: 'agents', label: '5. AI Swarm Agents', icon: Bot },
+            { id: 'audience', label: '6. Audience Vectoring', icon: Users },
+            { id: 'content', label: '7. Trust & Verification', icon: ShieldCheck },
+            { id: 'search', label: '8. Veritas Search AI', icon: Search }
           ].map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -464,7 +482,126 @@ export const VeritasIntelligenceCommandCenterModal: React.FC<VeritasIntelligence
             </div>
           )}
 
-          {/* TAB 5: VERITAS AI SEARCH */}
+          {/* TAB 2: GLOBAL INTELLIGENCE MAP */}
+          {activeTab === 'map' && (
+            <GlobalIntelligenceMap articles={articles} onSelectArticle={onSelectArticle} />
+          )}
+
+          {/* TAB 3: INGESTION PIPELINE */}
+          {activeTab === 'pipeline' && (
+            <div className="space-y-6">
+              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-white font-mono">CONTINUOUS INGESTION PIPELINE & DATA QUEUE</h3>
+                  <p className="text-xs text-slate-400 font-mono">Automated ingestion from RSS, Wire Feeds, APIs & Academic Repositories</p>
+                </div>
+                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-xs font-mono font-bold">
+                  Ingesting 12 Streams / sec
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {ingestedItems.map(item => (
+                  <div key={item.id} className="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded text-[10px] font-mono font-bold">
+                        {item.source_type}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">{item.published_date}</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-white">{item.title}</h4>
+                    <p className="text-xs text-slate-400 line-clamp-2">{item.content}</p>
+                    <div className="flex justify-between items-center text-[10px] font-mono pt-2 border-t border-slate-900">
+                      <span className="text-slate-500">Source: {item.source}</span>
+                      <span className="px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded font-bold">
+                        {item.processing_status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: AI TREND FORECASTS */}
+          {activeTab === 'forecast' && (
+            <div className="space-y-6">
+              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-white font-mono">PREDICTIVE TREND & EDITORIAL FORECASTING</h3>
+                  <p className="text-xs text-slate-400 font-mono">AI signal analysis predicting emerging news topics before mainstream takeoff</p>
+                </div>
+                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-full text-xs font-mono font-bold flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Signal Forecast Mode
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {forecasts.map(fc => (
+                  <div key={fc.id} className="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded text-[10px] font-mono font-bold">
+                          {fc.category}
+                        </span>
+                        <span className="text-emerald-400 text-xs font-bold font-mono">+{fc.growthPercentage}% Surge</span>
+                      </div>
+                      <h4 className="text-sm font-bold text-white">{fc.topic}</h4>
+                      <p className="text-xs text-slate-400">{fc.patternAnalysis}</p>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-900 space-y-2 text-[11px] font-mono">
+                      <span className="text-cyan-400 font-bold block">Editorial Plan:</span>
+                      <p className="text-slate-300">{fc.editorialActionPlan}</p>
+                      <div className="p-2 bg-slate-900 rounded-xl text-slate-200 italic font-sans text-xs">
+                        "{fc.recommendedArticleTitle}"
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: AI SWARM AGENTS */}
+          {activeTab === 'agents' && (
+            <div className="space-y-6">
+              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-white font-mono">AUTONOMOUS AGENT SWARM FRAMEWORK</h3>
+                  <p className="text-xs text-slate-400 font-mono">Specialized AI agents orchestrating real-time news collection, verification & synthesis</p>
+                </div>
+                <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-mono font-bold">
+                  7 Agents Active
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {agents.map(ag => (
+                  <div key={ag.agentId} className="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Bot className="w-4 h-4 text-indigo-400" />
+                        <span className="text-xs font-bold text-white font-mono">{ag.agentName}</span>
+                      </div>
+                      <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded text-[10px] font-mono font-bold">
+                        {ag.status}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-400 font-mono">{ag.role}</p>
+
+                    <div className="p-2.5 bg-slate-900 rounded-xl text-[11px] font-mono space-y-1">
+                      <span className="text-slate-500 block">Last Autonomous Action:</span>
+                      <span className="text-slate-200 block truncate">{ag.lastAction}</span>
+                      <span className="text-emerald-400 text-[10px] font-bold block pt-1">Agent Confidence: {ag.confidenceScore}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {activeTab === 'search' && (
             <div className="space-y-6">
               <form onSubmit={handleExecuteSearch} className="flex gap-2">
