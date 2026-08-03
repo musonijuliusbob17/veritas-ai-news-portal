@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+echo "===================================="
+echo " VERITAS DEPLOYMENT STARTING"
+echo "===================================="
+
+cd /home/newsycpt/public_html/veritas
+
+source /opt/alt/alt-nodejs22/enable
+
+echo "Pulling latest code..."
+git pull origin main
+
+echo "Installing dependencies..."
+npm install
+
+echo "Building project..."
+npm run build
+
+echo "Deployment completed successfully."
+
+echo "===================================="
