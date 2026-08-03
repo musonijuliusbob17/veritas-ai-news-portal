@@ -1,0 +1,324 @@
+[
+  {
+    "id": "log-mj0atqjax",
+    "timestamp": "2026-08-03T10:36:16.278Z",
+    "formattedTime": "10:36:16.278",
+    "severity": "INFO",
+    "source": "VDM Kernel",
+    "message": "Veritas Deployment Manager Orchestration Kernel initialized.",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-g38c7paxj",
+    "timestamp": "2026-08-03T10:36:17.278Z",
+    "formattedTime": "10:36:17.278",
+    "severity": "INFO",
+    "source": "VDM Kernel",
+    "message": "Loaded system configuration from /config/vdm.json. Enforcing 1-Active concurrency constraint.",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-puoxar8i0",
+    "timestamp": "2026-08-03T10:36:18.278Z",
+    "formattedTime": "10:36:18.278",
+    "severity": "INFO",
+    "source": "Build Pipeline",
+    "message": "Detected release commit 91679a2 on branch main (operator: admin@veritas.gov.rw).",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-b5sp0ymow",
+    "timestamp": "2026-08-03T10:36:21.278Z",
+    "formattedTime": "10:36:21.278",
+    "severity": "SUCCESS",
+    "source": "Build Pipeline",
+    "message": "Verified cryptographic GPG signature for commit 91679a2.",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-6u329kk9x",
+    "timestamp": "2026-08-03T10:36:24.278Z",
+    "formattedTime": "10:36:24.278",
+    "severity": "INFO",
+    "source": "Build Pipeline",
+    "message": "Pulling latest code changes from origin/main git workspace...",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-zuhiubavu",
+    "timestamp": "2026-08-03T10:36:26.278Z",
+    "formattedTime": "10:36:26.278",
+    "severity": "SUCCESS",
+    "source": "Rollback Engine",
+    "message": "Automated pre-deployment snapshot created: snap-1042 (v1.0.0 @ 91679a2).",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-i7poqjv58",
+    "timestamp": "2026-08-03T10:36:31.278Z",
+    "formattedTime": "10:36:31.278",
+    "severity": "INFO",
+    "source": "Build Pipeline",
+    "message": "Installing Node.js dependencies using npm ci --production...",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-eqsdhir10",
+    "timestamp": "2026-08-03T10:36:36.278Z",
+    "formattedTime": "10:36:36.278",
+    "severity": "WARN",
+    "source": "Build Pipeline",
+    "message": "RSS feed ingestion worker reported slight latency overhead (120ms).",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-9bgcvkfkp",
+    "timestamp": "2026-08-03T10:36:41.278Z",
+    "formattedTime": "10:36:41.278",
+    "severity": "INFO",
+    "source": "Build Pipeline",
+    "message": "Compiling TypeScript and Vite distribution bundle...",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-kfu8572ro",
+    "timestamp": "2026-08-03T10:36:46.278Z",
+    "formattedTime": "10:36:46.278",
+    "severity": "SUCCESS",
+    "source": "Health Checker",
+    "message": "Comprehensive 12-point health verification check PASSED (100% services online).",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-u3836oluf",
+    "timestamp": "2026-08-03T10:36:51.278Z",
+    "formattedTime": "10:36:51.278",
+    "severity": "SUCCESS",
+    "source": "VDM Kernel",
+    "message": "Deployment job dep-1042 marked SUCCESSful for Production environment.",
+    "deploymentId": "dep-1042"
+  },
+  {
+    "id": "log-8son02o36",
+    "timestamp": "2026-08-03T11:06:16.278Z",
+    "formattedTime": "11:06:16.278",
+    "severity": "INFO",
+    "source": "Queue Worker",
+    "message": "Persistent FIFO Queue Manager active. Monitoring for enqueued build jobs..."
+  },
+  {
+    "id": "log-tn8w2j0yf",
+    "timestamp": "2026-08-03T11:26:16.278Z",
+    "formattedTime": "11:26:16.278",
+    "severity": "INFO",
+    "source": "Health Checker",
+    "message": "Routine automated health probe executed. 12/12 checks healthy."
+  },
+  {
+    "id": "log-1785761758102-f1b5hc",
+    "timestamp": "2026-08-03T12:55:58.102Z",
+    "formattedTime": "12:55:58.102",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[GITHUB WEBHOOK] Received push event on branch refs/heads/main",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761758103-5jxtys",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "formattedTime": "12:55:58.103",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[GITHUB WEBHOOK] Commit a1b2c3d by Principal DevOps Engineer: \"Zero-touch deployment test commit\"",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761758103-3zexao",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "formattedTime": "12:55:58.103",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM PIPELINE] Initialized automated zero-touch build sequence dep-1043",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761758103-p34b0t",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "formattedTime": "12:55:58.103",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM PIPELINE] Running automated typescript compilation and asset bundle... PASSED",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761758103-junxvg",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "formattedTime": "12:55:58.103",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM HEALTH CHECK] Executing 12-point post-deployment system diagnostics... 12/12 PASSED",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761758103-evfo4m",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "formattedTime": "12:55:58.103",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM ROLLBACK] Automated rollback snapshot snap-1043 persisted to registry.",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761758103-79yrw3",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "formattedTime": "12:55:58.103",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM DEPLOYMENT] dep-1043 successfully deployed & reported to Veritas control plane.",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761787369-ylozvq",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[GITHUB WEBHOOK] Received push event on branch refs/heads/main",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761787369-t5k8k8",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[GITHUB WEBHOOK] Commit f9e8d7c by Principal DevOps Engineer: \"Testing Phusion Passenger restart trigger\"",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761787369-rursza",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM PIPELINE] Initialized automated zero-touch build sequence dep-1044",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761787369-clggw7",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM PIPELINE] Running automated typescript compilation and asset bundle... PASSED",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761787369-m21ool",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM HEALTH CHECK] Executing 12-point post-deployment system diagnostics... 12/12 PASSED",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761787369-nmkp70",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM ROLLBACK] Automated rollback snapshot snap-1044 persisted to registry.",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761787369-i6dqvc",
+    "timestamp": "2026-08-03T12:56:27.369Z",
+    "formattedTime": "12:56:27.369",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM DEPLOYMENT] dep-1044 successfully deployed & reported to Veritas control plane.",
+    "deploymentId": "dep-1044"
+  },
+  {
+    "id": "log-1785761844972-mmzukd",
+    "timestamp": "2026-08-03T12:57:24.972Z",
+    "formattedTime": "12:57:24.972",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[GITHUB WEBHOOK] Verified HMAC X-Hub-Signature-256 for push event on refs/heads/main",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844972-k7i8na",
+    "timestamp": "2026-08-03T12:57:24.972Z",
+    "formattedTime": "12:57:24.972",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[GITHUB WEBHOOK] Commit 1a2b3c4 by Principal DevOps Engineer: \"Verify zero-touch deployment with Phusion Passenger reload\"",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-2yfk7x",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM PIPELINE] Acquired deployment lock & initialized build dep-1043",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-5w7wci",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM PIPELINE] Executing git pull, npm install & production asset bundle... PASSED",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-28wpb0",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[NAMECHEAP PASSENGER] Touched tmp/restart.txt to trigger automated Phusion Passenger app reload.",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-68jpu3",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM HEALTH CHECK] Executed 12-point system health diagnostics... 11/11 PASSED",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-tkq5j2",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM ROLLBACK] Persisted rollback snapshot snap-1043 to snapshot registry.",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-tppxvj",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "INFO",
+    "source": "GitHub Webhook Engine",
+    "message": "[VCIO ENGINE] Generated deployment operational briefing for production release.",
+    "deploymentId": "dep-1043"
+  },
+  {
+    "id": "log-1785761844973-xi9i0m",
+    "timestamp": "2026-08-03T12:57:24.973Z",
+    "formattedTime": "12:57:24.973",
+    "severity": "SUCCESS",
+    "source": "GitHub Webhook Engine",
+    "message": "[VDM DEPLOYMENT] dep-1043 fully deployed to newsplus.ink without manual intervention.",
+    "deploymentId": "dep-1043"
+  }
+]

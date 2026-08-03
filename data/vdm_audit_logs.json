@@ -1,0 +1,173 @@
+[
+  {
+    "id": "audit-1785765562358-376",
+    "timestamp": "2026-08-03T13:59:22.358Z",
+    "method": "GET",
+    "endpoint": "/api/vdm/health",
+    "operator": "admin@veritas.gov.rw",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "HEALTH_QUERIED",
+    "status": "SUCCESS",
+    "details": {
+      "passed": 10,
+      "total": 11,
+      "status": "DEGRADED"
+    }
+  },
+  {
+    "id": "audit-1785765561618-562",
+    "timestamp": "2026-08-03T13:59:21.618Z",
+    "method": "GET",
+    "endpoint": "/api/vdm/version",
+    "operator": "admin@veritas.gov.rw",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "VERSION_QUERIED",
+    "status": "SUCCESS",
+    "details": {
+      "version": "0.0.0",
+      "commit": "91679a2"
+    }
+  },
+  {
+    "id": "audit-1785765561373-275",
+    "timestamp": "2026-08-03T13:59:21.373Z",
+    "method": "GET",
+    "endpoint": "/api/vdm/status",
+    "operator": "admin@veritas.gov.rw",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "STATUS_QUERIED",
+    "status": "SUCCESS",
+    "details": {
+      "deploymentState": "ACTIVE",
+      "activeJobs": 0,
+      "queuedJobs": 0
+    }
+  },
+  {
+    "id": "audit-1785765545561-132",
+    "timestamp": "2026-08-03T13:59:05.561Z",
+    "method": "GET",
+    "endpoint": "/api/vdm/status",
+    "operator": "admin@veritas.gov.rw",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "STATUS_QUERIED",
+    "status": "SUCCESS",
+    "details": {
+      "deploymentState": "ACTIVE",
+      "activeJobs": 0,
+      "queuedJobs": 0
+    }
+  },
+  {
+    "id": "audit-1785761844974-445",
+    "timestamp": "2026-08-03T12:57:24.974Z",
+    "method": "POST",
+    "endpoint": "/api/vdm/webhook/github",
+    "operator": "GitHub Webhook (Principal DevOps Engineer)",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "GITHUB_WEBHOOK_ZERO_TOUCH_DEPLOYMENT_SUCCESS",
+    "status": "SUCCESS",
+    "details": {
+      "buildNumber": 1043,
+      "commitHash": "1a2b3c4",
+      "branch": "main",
+      "commitMessage": "Verify zero-touch deployment with Phusion Passenger reload",
+      "healthChecksPassed": 11
+    }
+  },
+  {
+    "id": "audit-1785761787370-407",
+    "timestamp": "2026-08-03T12:56:27.370Z",
+    "method": "POST",
+    "endpoint": "/api/vdm/webhook/github",
+    "operator": "GitHub Webhook (Principal DevOps Engineer)",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "GITHUB_WEBHOOK_DEPLOYMENT_EXECUTED",
+    "status": "SUCCESS",
+    "details": {
+      "buildNumber": 1044,
+      "commitHash": "f9e8d7c",
+      "branch": "main",
+      "commitMessage": "Testing Phusion Passenger restart trigger"
+    }
+  },
+  {
+    "id": "audit-1785761758103-839",
+    "timestamp": "2026-08-03T12:55:58.103Z",
+    "method": "POST",
+    "endpoint": "/api/vdm/webhook/github",
+    "operator": "GitHub Webhook (Principal DevOps Engineer)",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "GITHUB_WEBHOOK_DEPLOYMENT_EXECUTED",
+    "status": "SUCCESS",
+    "details": {
+      "buildNumber": 1043,
+      "commitHash": "a1b2c3d",
+      "branch": "main",
+      "commitMessage": "Zero-touch deployment test commit"
+    }
+  },
+  {
+    "id": "audit-1785761728857-776",
+    "timestamp": "2026-08-03T12:55:28.857Z",
+    "method": "GET",
+    "endpoint": "/api/vdm/status",
+    "operator": "admin@veritas.gov.rw",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "curl/7.88.1",
+    "statusCode": 200,
+    "action": "STATUS_QUERIED",
+    "status": "SUCCESS",
+    "details": {
+      "deploymentState": "ACTIVE",
+      "activeJobs": 0,
+      "queuedJobs": 0
+    }
+  },
+  {
+    "id": "audit-1042",
+    "timestamp": "2026-08-03T11:00:45.704Z",
+    "method": "POST",
+    "endpoint": "/api/vdm/deploy",
+    "operator": "admin@veritas.gov.rw",
+    "ipAddress": "197.243.12.44",
+    "userAgent": "Mozilla/5.0 (Veritas Operations Center)",
+    "statusCode": 200,
+    "action": "DEPLOY_TRIGGERED",
+    "status": "SUCCESS",
+    "details": {
+      "environment": "Production",
+      "buildNumber": 1042
+    }
+  },
+  {
+    "id": "audit-1041",
+    "timestamp": "2026-08-02T12:00:45.704Z",
+    "method": "POST",
+    "endpoint": "/api/vdm/rollback",
+    "operator": "sysadmin@veritas.gov.rw",
+    "ipAddress": "197.243.12.10",
+    "userAgent": "cURL/8.2.1",
+    "statusCode": 200,
+    "action": "ROLLBACK_TRIGGERED",
+    "status": "SUCCESS",
+    "details": {
+      "snapshotId": "snap-1040",
+      "targetCommit": "7e281b0"
+    }
+  }
+]

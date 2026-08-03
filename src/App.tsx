@@ -47,6 +47,7 @@ import { EnterpriseIntelligenceSearchModal } from './components/EnterpriseIntell
 import { NarrativeIntelligenceModal } from './components/NarrativeIntelligenceModal';
 import { VcioBrainModal } from './components/VcioBrainModal';
 import { VciaInvestigativeModal } from './components/VciaInvestigativeModal';
+import { VeritasOperationsCenterModal } from './components/VeritasOperationsCenterModal';
 import { SuggestedForYouSection } from './components/SuggestedForYouSection';
 import { WhatsAppIntegration } from './components/WhatsAppIntegration';
 import { LiveUpdatesFeed } from './components/LiveUpdatesFeed';
@@ -130,6 +131,7 @@ export default function App() {
   const [showNarrativeEngine, setShowNarrativeEngine] = useState<boolean>(false);
   const [showVcioBrain, setShowVcioBrain] = useState<boolean>(false);
   const [showVciaInvestigative, setShowVciaInvestigative] = useState<boolean>(false);
+  const [showOperationsCenter, setShowOperationsCenter] = useState<boolean>(false);
 
   // Sync Dark Mode class on <html> element
   useEffect(() => {
@@ -312,6 +314,7 @@ export default function App() {
         onOpenNarrativeEngine={() => setShowNarrativeEngine(true)}
         onOpenVcioBrain={() => setShowVcioBrain(true)}
         onOpenVciaInvestigative={() => setShowVciaInvestigative(true)}
+        onOpenOperationsCenter={() => setShowOperationsCenter(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         weather={weather}
@@ -792,6 +795,14 @@ export default function App() {
         <VciaInvestigativeModal
           isOpen={showVciaInvestigative}
           onClose={() => setShowVciaInvestigative(false)}
+          articles={articles}
+        />
+      )}
+
+      {showOperationsCenter && (
+        <VeritasOperationsCenterModal
+          isOpen={showOperationsCenter}
+          onClose={() => setShowOperationsCenter(false)}
           articles={articles}
         />
       )}

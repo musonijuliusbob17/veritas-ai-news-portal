@@ -48,6 +48,7 @@ interface HeaderProps {
   onOpenNarrativeEngine?: () => void;
   onOpenVcioBrain?: () => void;
   onOpenVciaInvestigative?: () => void;
+  onOpenOperationsCenter?: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   weather: WeatherData | null;
@@ -108,6 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNarrativeEngine,
   onOpenVcioBrain,
   onOpenVciaInvestigative,
+  onOpenOperationsCenter,
   searchQuery,
   onSearchChange,
   weather,
@@ -621,6 +623,18 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">Admin</span>
           </button>
 
+          {/* Operations Center & Deployment Manager (VDM) Link */}
+          {onOpenOperationsCenter && (
+            <button
+              onClick={onOpenOperationsCenter}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-indigo-900 to-slate-900 text-emerald-400 hover:text-emerald-300 border border-indigo-500/50 hover:border-emerald-500 transition-all cursor-pointer shadow-sm"
+              title="Veritas Operations Center (VOC) & Deployment Manager (VDM)"
+            >
+              <Rocket className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span className="hidden md:inline">Operations Center (VDM)</span>
+            </button>
+          )}
+
           {/* MORE TOOLS (25+) DROPDOWN TRIGGER */}
           <button
             onClick={() => setShowToolsMenu(!showToolsMenu)}
@@ -672,6 +686,18 @@ export const Header: React.FC<HeaderProps> = ({
                       <span>Executive & Governance</span>
                     </div>
                     <div className="space-y-1">
+                      {onOpenOperationsCenter && (
+                        <button
+                          onClick={() => { onOpenOperationsCenter(); setShowToolsMenu(false); }}
+                          className="w-full text-left p-2 bg-gradient-to-r from-indigo-950/60 to-slate-900 border border-indigo-500/40 rounded-lg hover:border-emerald-500 flex items-center justify-between text-slate-100 hover:text-emerald-300 transition"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Rocket className="w-4 h-4 text-emerald-400" />
+                            <span className="font-extrabold text-emerald-300">Operations Center (VDM Deployment)</span>
+                          </div>
+                          <span className="text-[10px] text-emerald-400 font-mono font-bold">CORE DEVOPS</span>
+                        </button>
+                      )}
                       {onOpenExecutiveDashboard && (
                         <button
                           onClick={() => { onOpenExecutiveDashboard(); setShowToolsMenu(false); }}
