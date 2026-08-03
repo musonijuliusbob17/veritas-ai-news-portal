@@ -1,23 +1,23 @@
-#!/bin/bash
-set -e
+name: Deploy Veritas
 
-echo "===================================="
-echo " VERITAS DEPLOYMENT STARTING"
-echo "===================================="
+on:
+  push:
+    branches:
+      - main
 
-cd /home/newsycpt/public_html/veritas
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-source /opt/alt/alt-nodejs22/enable
-
-echo "Pulling latest code..."
-git pull origin main
-
-echo "Installing dependencies..."
-npm install
-
-echo "Building project..."
-npm run build
-
-echo "Deployment completed successfully."
-
-echo "===================================="
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/newsycpt/public_html/veritas
+            chmod +x deploy.sh
+            ./deploy.sh
