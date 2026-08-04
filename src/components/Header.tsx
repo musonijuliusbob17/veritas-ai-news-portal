@@ -4,7 +4,9 @@ import {
   Bookmark, Bell, User, BarChart2, Cpu, RefreshCw, Volume2, Settings,
   Globe, Network, Code, ShieldAlert, Sparkles, Bot, Compass, UserCheck, Building2, Info, Activity, Landmark, Terminal, BookOpen,
   ChevronDown, Grid, Menu, X, Layers, Clock, History, TrendingUp, Tag, Filter, Check
-} from 'lucide-react';
+} from 'lucide-react';<div style={{background:'#ffeb3b',padding:'6px',textAlign:'center',fontWeight:'bold'}}>
+🚀 AUTONOMOUS DEPLOYMENT TEST - 04 Aug 2026
+</div>
 import { SupportedLanguage, UserPreferences, WeatherData, StockTickerItem, Article } from '../types';
 import { WhatsAppIntegration } from './WhatsAppIntegration';
 
